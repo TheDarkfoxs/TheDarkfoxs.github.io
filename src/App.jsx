@@ -51,6 +51,44 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.DeviceOrientationEvent) {
+      return;
+    }
+
+    const requiresPermission = typeof window.DeviceOrientationEvent.requestPermission === 'function';
+    if (requiresPermission) {
+      return;
+    }
+
+    const handleOrientation = (event) => {
+      const { beta, gamma } = event;
+      if (beta === null || gamma === null) return;
+
+      const neutralBeta = 45;
+      const neutralGamma = 0;
+
+      const deltaBeta = beta - neutralBeta;
+      const deltaGamma = gamma - neutralGamma;
+
+      const maxDelta = 30;
+      const clampedBeta = Math.max(-maxDelta, Math.min(maxDelta, deltaBeta));
+      const clampedGamma = Math.max(-maxDelta, Math.min(maxDelta, deltaGamma));
+
+      const maxOffset = 40;
+      const tiltX = (clampedGamma / maxDelta) * maxOffset;
+      const tiltY = (clampedBeta / maxDelta) * maxOffset;
+
+      document.documentElement.style.setProperty('--tilt-x', `${tiltX}px`);
+      document.documentElement.style.setProperty('--tilt-y', `${tiltY}px`);
+    };
+
+    window.addEventListener('deviceorientation', handleOrientation);
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation);
+    };
+  }, []);
+
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
