@@ -34,6 +34,7 @@ export const portfolioData = {
       image: "/fnafdle.png",
       github: "https://github.com/TheDarkfoxs",
       demo: "https://fnafdle.netlify.app/",
+      demoText: "Demo Live",
       isFigma: false
     },
     {
@@ -44,6 +45,7 @@ export const portfolioData = {
       image: "/trailers.png",
       github: "https://github.com/TheDarkfoxs",
       demo: "https://ranchotrailers.com/",
+      demoText: "Visitar Sitio",
       isFigma: false
     },
     {
@@ -54,6 +56,7 @@ export const portfolioData = {
       image: "/security.png",
       github: "https://github.com/TheDarkfoxs",
       demo: "https://houstonitsecurity.net/",
+      demoText: "Visitar Sitio",
       isFigma: false
     },
     {
