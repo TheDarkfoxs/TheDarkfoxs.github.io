@@ -514,6 +514,26 @@ section {
   transform: scale(1.03);
 }
 
+/* Custom styles for mobile project cards to show the full portrait screenshot */
+.project-card-mobile .project-image-wrapper {
+  padding-top: 85%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+.project-card-mobile .project-image {
+  height: 90%;
+  width: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
+}
+
+.project-card-mobile:hover .project-image {
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
 .project-content {
   padding: 1.8rem;
   flex-grow: 1;
@@ -707,3 +727,180 @@ footer {
     justify-content: center;
   }
 }
+
+/* Figma Prototype Lightbox Modal (Liquid Glass style) */
+.prototype-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 9, 13, 0.7);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.prototype-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.prototype-modal-container {
+  width: 92%;
+  max-width: 1200px;
+  height: 85vh;
+  background: rgba(22, 23, 29, 0.65);
+  border: 1px solid var(--glass-border);
+  box-shadow: 
+    inset 0 1px 1px var(--glass-highlight),
+    0 30px 60px rgba(0, 0, 0, 0.7);
+  border-radius: 28px;
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(40px) scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prototype-modal-container.mobile-format {
+  max-width: 440px;
+}
+
+.prototype-modal-overlay.active .prototype-modal-container {
+  transform: translateY(0) scale(1);
+}
+
+.prototype-modal-header {
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(22, 23, 29, 0.2);
+}
+
+.prototype-modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.prototype-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.prototype-modal-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  border-radius: 99px;
+  transition: var(--transition-fast);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.prototype-modal-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.prototype-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  transition: var(--transition-fast);
+}
+
+.prototype-modal-close:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.12);
+  transform: rotate(90deg);
+}
+
+.prototype-modal-body {
+  flex-grow: 1;
+  position: relative;
+  background: #000;
+}
+
+.prototype-modal-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  z-index: 2;
+  position: relative;
+}
+
+/* Spinner */
+.prototype-modal-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--liquid-blue);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Lock body scroll */
+.no-scroll {
+  overflow: hidden !important;
+}
+
+@media (max-width: 768px) {
+  .prototype-modal-container {
+    height: 80vh;
+    border-radius: 20px;
+  }
+  .prototype-modal-header {
+    height: 60px;
+    padding: 0 1.2rem;
+  }
+  .prototype-modal-title {
+    font-size: 1.05rem;
+  }
+  .prototype-modal-btn span {
+    display: none;
+  }
+}
+

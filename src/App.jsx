@@ -4,8 +4,30 @@ import { portfolioData } from './data/portfolioData';
 function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeFigmaEmbed, setActiveFigmaEmbed] = useState(null);
+  const [activeFigmaUrl, setActiveFigmaUrl] = useState(null);
+  const [activeFigmaTitle, setActiveFigmaTitle] = useState('');
+  const [iframeLoading, setIframeLoading] = useState(true);
+  const [activeFigmaIsMobile, setActiveFigmaIsMobile] = useState(false);
 
   const { personalInfo, skills, projects } = portfolioData;
+
+  const openFigmaPrototype = (embedUrl, figmaUrl, title, isMobile) => {
+    setActiveFigmaTitle(title);
+    setActiveFigmaEmbed(embedUrl);
+    setActiveFigmaUrl(figmaUrl);
+    setActiveFigmaIsMobile(isMobile);
+    setIframeLoading(true);
+    document.body.classList.add('no-scroll');
+  };
+
+  const closeFigmaPrototype = () => {
+    setActiveFigmaEmbed(null);
+    setActiveFigmaUrl(null);
+    setActiveFigmaTitle('');
+    setActiveFigmaIsMobile(false);
+    document.body.classList.remove('no-scroll');
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -182,7 +204,7 @@ function App() {
           <h2 className="section-title">Mis Proyectos</h2>
           <div className="projects-grid">
             {projects.map((project) => (
-              <article key={project.id} className="project-card">
+              <article key={project.id} className={`project-card ${project.isMobile ? 'project-card-mobile' : ''}`}>
                 <div className="project-image-wrapper">
                   <img src={project.image} alt={project.title} className="project-image" loading="lazy" />
                 </div>
@@ -195,21 +217,43 @@ function App() {
                     ))}
                   </div>
                   <div className="project-links">
-                    <a href={project.github} className="project-link" target="_blank" rel="noopener noreferrer">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-                        <path d="M9 18c-4.51 2-5-2-7-2" />
-                      </svg>
-                      Código
-                    </a>
-                    <a href={project.demo} className="project-link" target="_blank" rel="noopener noreferrer">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                        <polyline points="15 3 21 3 21 9" />
-                        <line x1="10" y1="14" x2="21" y2="3" />
-                      </svg>
-                      Demo Live
-                    </a>
+                    {project.isFigma ? (
+                      <a href={project.figmaUrl} className="project-link" target="_blank" rel="noopener noreferrer">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M8 2a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h3V2H8zm0 8H5a3 3 0 0 0 0 6h3v-6zm3 6H8a3 3 0 0 0 0 6h3v-6zm3-6h-3v6h3a3 3 0 0 0 0-6zm0-8h-3v6h3a3 3 0 0 0 0-6z"/>
+                        </svg>
+                        Figma
+                      </a>
+                    ) : (
+                      <a href={project.github} className="project-link" target="_blank" rel="noopener noreferrer">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                          <path d="M9 18c-4.51 2-5-2-7-2" />
+                        </svg>
+                        Código
+                      </a>
+                    )}
+                    {project.isFigma ? (
+                      <a 
+                        href="#projects" 
+                        className="project-link" 
+                        onClick={(e) => { e.preventDefault(); openFigmaPrototype(project.embedUrl, project.figmaUrl, project.title, project.isMobile); }}
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg>
+                        Ver Prototipo
+                      </a>
+                    ) : (
+                      <a href={project.demo} className="project-link" target="_blank" rel="noopener noreferrer">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          <polyline points="15 3 21 3 21 9" />
+                          <line x1="10" y1="14" x2="21" y2="3" />
+                        </svg>
+                        Demo Live
+                      </a>
+                    )}
                   </div>
                 </div>
               </article>
@@ -232,20 +276,6 @@ function App() {
                 </svg>
                 GitHub
               </a>
-              <a href={personalInfo.social.linkedin} className="social-btn" target="_blank" rel="noopener noreferrer">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                  <rect x="2" y="9" width="4" height="12" />
-                  <circle cx="4" cy="4" r="2" />
-                </svg>
-                LinkedIn
-              </a>
-              <a href={personalInfo.social.twitter} className="social-btn" target="_blank" rel="noopener noreferrer">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                </svg>
-                Twitter / X
-              </a>
             </div>
             <a href={`mailto:${personalInfo.email}`} className="contact-email">
               {personalInfo.email}
@@ -258,6 +288,61 @@ function App() {
       <footer>
         <p>&copy; {new Date().getFullYear()} {personalInfo.name}. Hecho con React & Estilo Liquid Glass.</p>
       </footer>
+
+      {/* Figma Prototype Modal Lightbox */}
+      <div 
+        className={`prototype-modal-overlay ${activeFigmaEmbed ? 'active' : ''}`}
+        onClick={closeFigmaPrototype}
+      >
+        <div 
+          className={`prototype-modal-container ${activeFigmaIsMobile ? 'mobile-format' : ''}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="prototype-modal-header">
+            <h3 className="prototype-modal-title">{activeFigmaTitle}</h3>
+            <div className="prototype-modal-actions">
+              {activeFigmaUrl && (
+                <a 
+                  href={activeFigmaUrl} 
+                  className="prototype-modal-btn" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                  <span>Abrir en Figma</span>
+                </a>
+              )}
+              <button className="prototype-modal-close" onClick={closeFigmaPrototype} aria-label="Cerrar prototipo">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div className="prototype-modal-body">
+            {iframeLoading && (
+              <div className="prototype-modal-loader">
+                <div className="spinner"></div>
+                <p>Cargando prototipo interactivo...</p>
+              </div>
+            )}
+            {activeFigmaEmbed && (
+              <iframe
+                src={activeFigmaEmbed}
+                className="prototype-modal-iframe"
+                allowFullScreen
+                onLoad={() => setIframeLoading(false)}
+                title={activeFigmaTitle}
+              ></iframe>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
