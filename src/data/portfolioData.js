@@ -12,18 +12,56 @@ export const portfolioData = {
       resume: "#"
     }
   },
+  highlights: [
+    {
+      title: "CRM & ERP",
+      level: "Senior",
+      levelColor: "#ec4899",
+      iconName: "building",
+      description: "Desarrollo de CRM, ERP y plataformas de software empresarial.",
+      tags: ["Salesforce", "HubSpot", "Enterprise"]
+    },
+    {
+      title: "Full Stack Dev",
+      level: "Expert",
+      levelColor: "#38bdf8",
+      iconName: "laptop",
+      description: "Full Stack Developer enfocado en Frontend y experiencias interactivas.",
+      tags: ["React", "Node.js", "TypeScript"]
+    },
+    {
+      title: "React & UI/UX",
+      level: "Advanced",
+      levelColor: "#47a248",
+      iconName: "palette",
+      description: "Entusiasta de React y apasionado por el diseño UI/UX centrado en el usuario.",
+      tags: ["Figma", "Tailwind", "Next.js"]
+    },
+    {
+      title: "API & Automation",
+      level: "Master",
+      levelColor: "#ec4899",
+      iconName: "code",
+      description: "Diseño de APIs, integraciones y flujos de automatización complejos.",
+      tags: ["REST", "GraphQL", "n8n"]
+    }
+  ],
   skills: [
     {
-      category: "Frontend",
-      items: ["HTML5", "CSS3 / CSS Modules", "JavaScript (ES6+)", "React.js", "Vite"]
+      category: "Lenguajes & Frameworks",
+      items: ["JavaScript", "PHP", "C", "React", "Laravel", "React Native", "Flutter"]
     },
     {
-      category: "Backend & Bases de Datos",
-      items: ["Node.js", "Express", "REST APIs", "MongoDB", "SQL"]
+      category: "Bases de Datos & Cloud",
+      items: ["MySQL", "PostgreSQL", "MongoDB", "Firebase", "Amazon S3"]
     },
     {
-      category: "Herramientas & Diseño",
-      items: ["Git & GitHub", "VS Code", "Figma", "Responsive Design", "UX/UI Principles"]
+      category: "Herramientas & Especialidades",
+      items: ["GitHub", "Postman", "Figma", "Desarrollo Full Stack", "APIs REST", "Integración de Sistemas"]
+    },
+    {
+      category: "Habilidades Interpersonales",
+      items: ["Trabajo en Equipo", "Resolución de Problemas", "Adaptabilidad", "Proactividad"]
     }
   ],
   projects: [
@@ -63,18 +101,22 @@ export const portfolioData = {
     {
       id: 5,
       title: "Sistema de Gestión de Calidad",
-      description: "Prototipo para un panel de control web enfocado en la gestión de calidad, cumplimiento y auditorías de procesos en una organización. Incluye seguimiento de documentos e informes interactivos.",
+      description: "Proyecto de 3 meses desarrollado en la escuela para la materia de proyectos computacionales. Es un sistema integral para la gestión de calidad, cumplimiento y auditorías de procesos en una organización. Al ser un desarrollo de uso privado empresarial, únicamente se incluye el diseño interactivo en Figma.",
       tech: ["UI/UX Design", "Figma", "Web Dashboard", "B2B SaaS Prototype"],
       image: "/mi-calidad.svg",
       figmaUrl: "https://www.figma.com/proto/nsolbQsjmt0mMwZYjRTpO3/ProyectoCalidad?t=7F98ppAdHLYH5gf7-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&node-id=0-1",
       embedUrl: "https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2FnsolbQsjmt0mMwZYjRTpO3%2FProyectoCalidad%3Ft%3D7F98ppAdHLYH5gf7-0%26scaling%3Dscale-down%26content-scaling%3Dfixed%26page-id%3D0%253A1%26node-id%3D0-1",
       isFigma: true,
-      isMobile: false
+      isMobile: false,
+      award: {
+        title: "1er Lugar - ExpoCiComp Otoño 2025",
+        description: "12.ª Edición - Primer lugar en la Exposición de Proyectos del Área de Ciencias de la Computación. Reconocimiento por un proyecto de software desarrollado durante tres semestres."
+      }
     },
     {
       id: 4,
       title: "Mi Finanzas",
-      description: "Aplicación móvil funcional de finanzas personales. Cuenta con flujos completos de registro de transacciones, análisis mensual de ingresos/gastos, presupuestos inteligentes y control de cuentas.",
+      description: "Aplicación móvil funcional de finanzas personales. Fue desarrollada como un proyecto escolar para la materia de desarrollo móvil. Cuenta con flujos completos de registro de transacciones, análisis mensual e integración de presupuestos. Se incluye únicamente el diseño interactivo en Figma debido a la imposibilidad de ejecutar la aplicación nativa en el navegador.",
       tech: ["React Native", "SQLite", "UI/UX Design", "Figma", "Functional App"],
       image: "/mi-finanzas.svg",
       figmaUrl: "https://www.figma.com/proto/4e6wudh28kE5NLVp1R2etz/MiFinanzas?t=hfj8IY2HyUuzTvFr-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&node-id=3-345",
