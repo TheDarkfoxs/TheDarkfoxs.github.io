@@ -1,8 +1,9 @@
 export const portfolioData = {
   personalInfo: {
-    name: "TheDarkfox",
-    title: "Software Developer & Designer",
-    subtitle: "Construyendo el futuro de la web con código limpio y diseño excepcional.",
+    name: "Jonatan Martínez",
+    username: "@TheDarkfoxs",
+    title: "Ingeniero en Sistemas Inteligentes",
+    subtitle: "Desarrollador Full Stack con experiencia en Laravel, React e integración de APIs. Especializado en el desarrollo de plataformas empresariales, con enfoque en escalabilidad, automatización y experiencia de usuario. Destaco por mi capacidad de adaptación, aprendizaje continuo y enfoque colaborativo para resolver problemas.",
     bio: "Soy un desarrollador apasionado por crear experiencias digitales interactivas, responsivas y visualmente impactantes. Me especializo en React, desarrollo frontend moderno y en la creación de interfaces de usuario premium que cautiven al usuario a primera vista.",
     location: "México",
     email: "jonatanu24mtz@gmail.com",

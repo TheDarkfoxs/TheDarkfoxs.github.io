@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { portfolioData } from './data/portfolioData';
 
 function App() {
@@ -9,6 +10,77 @@ function App() {
   const [activeFigmaTitle, setActiveFigmaTitle] = useState('');
   const [iframeLoading, setIframeLoading] = useState(true);
   const [activeFigmaIsMobile, setActiveFigmaIsMobile] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') || 'dark';
+    }
+    return 'dark';
+  });
+
+  const [prevOption, setPrevOption] = useState(() => {
+    const savedTheme = (typeof window !== 'undefined' ? localStorage.getItem('theme') : null) || 'dark';
+    if (savedTheme === 'light') return '1';
+    if (savedTheme === 'dim') return '3';
+    return '2'; // dark
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const handleThemeChange = (e, nextTheme, optionIndex) => {
+    if (theme === nextTheme) return;
+
+    let prevIndex = '2';
+    if (theme === 'light') prevIndex = '1';
+    if (theme === 'dim') prevIndex = '3';
+    setPrevOption(prevIndex);
+
+    if (!document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setTheme(nextTheme);
+      return;
+    }
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    document.documentElement.classList.add('theme-transition-active');
+
+    const transition = document.startViewTransition(() => {
+      flushSync(() => {
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        localStorage.setItem('theme', nextTheme);
+        setTheme(nextTheme);
+      });
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`
+          ]
+        },
+        {
+          duration: 650,
+          easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+          pseudoElement: '::view-transition-new(root)'
+        }
+      );
+    });
+
+    transition.finished.then(() => {
+      document.documentElement.classList.remove('theme-transition-active');
+    });
+  };
 
   const { personalInfo, skills, projects } = portfolioData;
 
@@ -51,6 +123,28 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const updateIndicator = () => {
+      const activeLink = document.querySelector('.nav-links a.active');
+      const container = document.querySelector('.nav-links');
+      if (activeLink && container) {
+        container.style.setProperty('--nav-indicator-left', `${activeLink.offsetLeft}px`);
+        container.style.setProperty('--nav-indicator-width', `${activeLink.offsetWidth}px`);
+        container.style.setProperty('--nav-indicator-height', `${activeLink.offsetHeight}px`);
+        container.style.setProperty('--nav-indicator-top', `${activeLink.offsetTop}px`);
+      }
+    };
+
+    updateIndicator();
+    const timer = setTimeout(updateIndicator, 50);
+
+    window.addEventListener('resize', updateIndicator);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateIndicator);
+    };
+  }, [activeSection, menuOpen]);
+
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -75,78 +169,144 @@ function App() {
       </div>
 
       {/* Navigation Header */}
-      <nav className="navbar" id="main-nav">
-        <a href="#home" className="logo" onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}>
-          {personalInfo.name}
-        </a>
+      {/* Navigation Header Wrapper */}
+      <div className="navbar-wrapper">
+        <div className="navbar-fixed-container">
+          <nav className="navbar" id="main-nav">
+            <a href="#home" className="logo" onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}>
+              {personalInfo.name}
+            </a>
 
-        {/* Mobile menu button */}
-        <button 
-          className="menu-toggle" 
-          onClick={toggleMenu} 
-          aria-label="Toggle navigation menu"
-          aria-expanded={menuOpen}
-        >
-          <span style={{ transform: menuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }}></span>
-          <span style={{ opacity: menuOpen ? 0 : 1 }}></span>
-          <span style={{ transform: menuOpen ? 'rotate(-45deg) translate(4px, -4px)' : 'none' }}></span>
-        </button>
+            {/* Navigation links */}
+            <ul className="nav-links" style={{ 
+              display: menuOpen ? 'flex' : undefined, 
+              flexDirection: menuOpen ? 'column' : undefined, 
+              position: menuOpen ? 'absolute' : undefined, 
+              top: menuOpen ? '75px' : undefined, 
+              right: menuOpen ? '0' : undefined, 
+              width: menuOpen ? '100%' : undefined, 
+              background: menuOpen ? 'var(--menu-bg)' : undefined, 
+              backdropFilter: menuOpen ? 'blur(25px)' : undefined,
+              WebkitBackdropFilter: menuOpen ? 'blur(25px)' : undefined,
+              padding: menuOpen ? '2rem' : undefined, 
+              borderBottom: menuOpen ? '1px solid var(--glass-border)' : undefined, 
+              borderRadius: menuOpen ? '24px' : undefined,
+              boxShadow: menuOpen ? '0 20px 40px var(--glass-shadow)' : undefined,
+              gap: menuOpen ? '1.2rem' : undefined 
+            }}>
+              <div className="nav-indicator"></div>
+              <li>
+                <a 
+                  href="#home" 
+                  className={activeSection === 'home' ? 'active' : ''}
+                  onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}
+                >
+                  Inicio
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#about" 
+                  className={activeSection === 'about' ? 'active' : ''}
+                  onClick={(e) => { e.preventDefault(); handleNavClick('about'); }}
+                >
+                  Sobre Mí
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#projects" 
+                  className={activeSection === 'projects' ? 'active' : ''}
+                  onClick={(e) => { e.preventDefault(); handleNavClick('projects'); }}
+                >
+                  Proyectos
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#contact" 
+                  className={activeSection === 'contact' ? 'active' : ''}
+                  onClick={(e) => { e.preventDefault(); handleNavClick('contact'); }}
+                >
+                  Contacto
+                </a>
+              </li>
+            </ul>
 
-        {/* Navigation links */}
-        <ul className="nav-links" style={{ 
-          display: menuOpen ? 'flex' : undefined, 
-          flexDirection: menuOpen ? 'column' : undefined, 
-          position: menuOpen ? 'absolute' : undefined, 
-          top: menuOpen ? '75px' : undefined, 
-          right: menuOpen ? '0' : undefined, 
-          width: menuOpen ? '100%' : undefined, 
-          background: menuOpen ? 'rgba(18, 19, 24, 0.96)' : undefined, 
-          backdropFilter: menuOpen ? 'blur(25px)' : undefined,
-          WebkitBackdropFilter: menuOpen ? 'blur(25px)' : undefined,
-          padding: menuOpen ? '2rem' : undefined, 
-          borderBottom: menuOpen ? '1px solid var(--glass-border)' : undefined, 
-          borderRadius: menuOpen ? '24px' : undefined,
-          boxShadow: menuOpen ? '0 20px 40px rgba(0,0,0,0.5)' : undefined,
-          gap: menuOpen ? '1.2rem' : undefined 
-        }}>
-          <li>
-            <a 
-              href="#home" 
-              className={activeSection === 'home' ? 'active' : ''}
-              onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}
-            >
-              Inicio
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#about" 
-              className={activeSection === 'about' ? 'active' : ''}
-              onClick={(e) => { e.preventDefault(); handleNavClick('about'); }}
-            >
-              Sobre Mí
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#projects" 
-              className={activeSection === 'projects' ? 'active' : ''}
-              onClick={(e) => { e.preventDefault(); handleNavClick('projects'); }}
-            >
-              Proyectos
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#contact" 
-              className={activeSection === 'contact' ? 'active' : ''}
-              onClick={(e) => { e.preventDefault(); handleNavClick('contact'); }}
-            >
-              Contacto
-            </a>
-          </li>
-        </ul>
-      </nav>
+            {/* Actions (Menu toggle only) */}
+            <div className="nav-actions">
+              <button 
+                className="menu-toggle" 
+                onClick={toggleMenu} 
+                aria-label="Toggle navigation menu"
+                aria-expanded={menuOpen}
+              >
+                <span style={{ transform: menuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }}></span>
+                <span style={{ opacity: menuOpen ? 0 : 1 }}></span>
+                <span style={{ transform: menuOpen ? 'rotate(-45deg) translate(4px, -4px)' : 'none' }}></span>
+              </button>
+            </div>
+          </nav>
+        </div>
+
+        {/* Floating Theme Switcher Outside */}
+        <fieldset className="switcher" c-previous={prevOption}>
+          <legend className="switcher__legend">Seleccionar Tema</legend>
+          
+          <label className="switcher__option" title="Modo Claro">
+            <input 
+              type="radio" 
+              name="theme-switcher" 
+              value="light" 
+              checked={theme === 'light'} 
+              onChange={(e) => handleThemeChange(e, 'light', '1')} 
+              className="switcher__input"
+              c-option="1"
+            />
+            <svg className="switcher__icon sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          </label>
+
+          <label className="switcher__option" title="Modo Oscuro">
+            <input 
+              type="radio" 
+              name="theme-switcher" 
+              value="dark" 
+              checked={theme === 'dark'} 
+              onChange={(e) => handleThemeChange(e, 'dark', '2')} 
+              className="switcher__input"
+              c-option="2"
+            />
+            <svg className="switcher__icon moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </label>
+
+          <label className="switcher__option" title="Modo Tenue">
+            <input 
+              type="radio" 
+              name="theme-switcher" 
+              value="dim" 
+              checked={theme === 'dim'} 
+              onChange={(e) => handleThemeChange(e, 'dim', '3')} 
+              className="switcher__input"
+              c-option="3"
+            />
+            <svg className="switcher__icon star-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </label>
+        </fieldset>
+      </div>
 
       {/* Main Content */}
       <main>
@@ -154,6 +314,7 @@ function App() {
         <section id="home" className="hero">
           <p className="hero-welcome">Portfolio Personal</p>
           <h1 className="hero-name">{personalInfo.name}</h1>
+          <p className="hero-username">{personalInfo.username}</p>
           <h2 className="hero-title">{personalInfo.title}</h2>
           <p className="hero-description">{personalInfo.subtitle}</p>
           <div className="hero-ctas">
