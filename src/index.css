@@ -159,7 +159,6 @@ body {
   filter: blur(120px);
   opacity: 0.45;
   mix-blend-mode: screen;
-  animation: liquid-drift 25s infinite alternate ease-in-out;
 }
 
 .blob-1 {
@@ -168,7 +167,6 @@ body {
   background: radial-gradient(circle, var(--liquid-blue) 0%, rgba(74, 144, 226, 0) 70%);
   top: -10%;
   left: -5%;
-  animation-duration: 20s;
 }
 
 .blob-2 {
@@ -177,8 +175,6 @@ body {
   background: radial-gradient(circle, var(--liquid-indigo) 0%, rgba(99, 102, 241, 0) 70%);
   bottom: -15%;
   right: -5%;
-  animation-duration: 28s;
-  animation-delay: -5s;
 }
 
 .blob-3 {
@@ -187,8 +183,6 @@ body {
   background: radial-gradient(circle, var(--liquid-pink) 0%, rgba(236, 72, 153, 0) 70%);
   top: 40%;
   left: 45%;
-  animation-duration: 24s;
-  animation-delay: -10s;
 }
 
 @keyframes liquid-drift {
