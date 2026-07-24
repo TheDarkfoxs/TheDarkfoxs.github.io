@@ -48,7 +48,7 @@
 [data-theme='light'] {
   /* Frosted White Base */
   --bg-space-gray: #f2f4f8;
-  --bg-card: rgba(255, 255, 255, 0.45);
+  --bg-card: rgba(255, 255, 255, 0.72);
   
   /* Text */
   --text-primary: #0e1014;
@@ -210,8 +210,9 @@ body {
 .navbar-wrapper {
   position: fixed;
   top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   width: 92%;
   max-width: 1200px;
   height: 60px;
@@ -234,8 +235,8 @@ body {
   height: 100%;
   box-sizing: border-box;
   background: var(--bg-card);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--glass-border);
   border-radius: 9999px;
   box-shadow: 
