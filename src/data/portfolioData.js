@@ -66,6 +66,18 @@ export const portfolioData = {
   ],
   projects: [
     {
+      id: 7,
+      title: "Minecraft Network - Landing Page & Comunidad",
+      description: "Plataforma web oficial para un servidor de Minecraft. Incluye estado del servidor en tiempo real, calculadora de créditos/tienda, guía de modalidades, eventos comunitarios y un diseño moderno e inmersivo.",
+      tech: ["React.js", "TypeScript", "Vite", "Tailwind CSS", "Lucide Icons"],
+      image: "/mc-server.png",
+      github: "https://github.com/TheDarkfoxs",
+      demo: "https://mymcserver.netlify.app/",
+      demoText: "Visitar Sitio",
+      isFigma: false,
+      badge: "Proyecto más reciente"
+    },
+    {
       id: 1,
       title: "FNAFdle - Guess the FNAF Character",
       description: "Un juego interactivo estilo Wordle ambientado en el universo de Five Nights at Freddy's. Adivina el personaje secreto diario a partir de pistas dinámicas como su género, especie, color y juego debut.",

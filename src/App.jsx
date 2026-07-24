@@ -478,11 +478,17 @@ function App() {
           <h2 className="section-title">Mis Proyectos</h2>
           <div className="projects-grid">
             {projects.map((project) => (
-              <article key={project.id} className={`project-card ${project.isMobile ? 'project-card-mobile' : ''}`}>
+              <article key={project.id} className={`project-card ${project.isMobile ? 'project-card-mobile' : ''} ${project.badge ? 'project-card-highlight' : ''}`}>
                 <div className="project-image-wrapper">
                   <img src={project.image} alt={project.title} className="project-image" loading="lazy" />
                 </div>
                 <div className="project-content">
+                  {project.badge && (
+                    <div className="project-badge">
+                      <span className="badge-dot"></span>
+                      <span>{project.badge}</span>
+                    </div>
+                  )}
                   <h3 className="project-title">{project.title}</h3>
                   {project.award && (
                     <div className="project-award-wrapper">
@@ -509,6 +515,13 @@ function App() {
                     </div>
                   )}
                   <p className="project-desc">{project.description}</p>
+                  {project.tech && project.tech.length > 0 && (
+                    <div className="project-tech-tags">
+                      {project.tech.map((t, idx) => (
+                        <span key={idx} className="project-tech-tag">{t}</span>
+                      ))}
+                    </div>
+                  )}
                   <div className="project-links">
                     {project.isFigma ? (
                       <a 
