@@ -66,6 +66,18 @@ export const portfolioData = {
   ],
   projects: [
     {
+      id: 8,
+      title: "Criatools - Creator OS",
+      description: "Plataforma web integral para creadores de contenido impulsada por Inteligencia Artificial. Incluye herramientas de automatización, generador de guiones con IA, gestión de patrocinios, analíticas y utilidades avanzadas para optimizar la productividad y creación de contenido.",
+      tech: ["React.js", "TypeScript", "Vite", "Tailwind CSS", "Lucide Icons"],
+      image: "/criatools.png",
+      github: "https://github.com/TheDarkfoxs",
+      demo: "https://criatools.com/",
+      demoText: "Visitar Sitio",
+      isFigma: false,
+      badge: "Proyecto más reciente"
+    },
+    {
       id: 7,
       title: "Minecraft Network - Landing Page & Comunidad",
       description: "Plataforma web oficial para un servidor de Minecraft. Incluye estado del servidor en tiempo real, calculadora de créditos/tienda, guía de modalidades, eventos comunitarios y un diseño moderno e inmersivo.",
@@ -74,8 +86,7 @@ export const portfolioData = {
       github: "https://github.com/TheDarkfoxs",
       demo: "https://mymcserver.netlify.app/",
       demoText: "Visitar Sitio",
-      isFigma: false,
-      badge: "Proyecto más reciente"
+      isFigma: false
     },
     {
       id: 1,
