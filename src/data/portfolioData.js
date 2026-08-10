@@ -124,7 +124,7 @@ export const portfolioData = {
     {
       id: 5,
       title: "Sistema de Gestión de Calidad",
-      description: "Proyecto de 3 meses desarrollado en la escuela para la materia de proyectos computacionales. Es un sistema integral para la gestión de calidad, cumplimiento y auditorías de procesos en una organización. Al ser un desarrollo de uso privado empresarial, únicamente se incluye el diseño interactivo en Figma.",
+      description: "Proyecto de 3 semestres desarrollado en la escuela para la materia de proyectos computacionales. Es un sistema integral para la gestión de calidad, cumplimiento y auditorías de procesos en una organización. Al ser un desarrollo de uso privado empresarial, únicamente se incluye el diseño interactivo en Figma.",
       tech: ["UI/UX Design", "Figma", "Web Dashboard", "B2B SaaS Prototype"],
       image: "/mi-calidad.svg",
       figmaUrl: "https://www.figma.com/proto/nsolbQsjmt0mMwZYjRTpO3/ProyectoCalidad?t=7F98ppAdHLYH5gf7-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&node-id=0-1",
