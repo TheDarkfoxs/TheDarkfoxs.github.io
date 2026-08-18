@@ -151,6 +151,7 @@ body {
   overflow: hidden;
   background-color: var(--bg-space-gray);
   pointer-events: none;
+  isolation: isolate;
 }
 
 .liquid-blob {
