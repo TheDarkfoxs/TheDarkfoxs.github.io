@@ -414,7 +414,7 @@ section {
 }
 
 .hero-description {
-  max-width: 640px;
+  max-width: 780px;
   font-size: 1.1rem;
   color: var(--text-secondary);
   margin-bottom: 3rem;
