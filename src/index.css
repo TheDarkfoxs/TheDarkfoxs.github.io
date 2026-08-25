@@ -116,6 +116,7 @@
   scroll-behavior: smooth;
 }
 
+html,
 body {
   background-color: var(--bg-space-gray);
   color: var(--text-primary);
