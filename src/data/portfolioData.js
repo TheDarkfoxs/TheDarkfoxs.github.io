@@ -96,8 +96,7 @@ export const portfolioData = {
       github: "https://github.com/TheDarkfoxs",
       demo: "https://novaflow.solislooms.com/auth/login",
       demoText: "Visitar ClickBos",
-      isFigma: false,
-      imageFit: "contain"
+      isFigma: false
     },
     {
       id: 9,
@@ -116,8 +115,7 @@ export const portfolioData = {
       github: "https://github.com/TheDarkfoxs",
       demo: "https://loomsspot.com/auth/login",
       demoText: "Visitar CRM",
-      isFigma: false,
-      imageFit: "contain"
+      isFigma: false
     },
     {
       id: 7,
@@ -131,6 +129,45 @@ export const portfolioData = {
       isFigma: false
     },
     {
+      id: 5,
+      title: "Sistema de Gestión de Calidad",
+      description: "Proyecto de 3 semestres desarrollado en la escuela para la materia de proyectos computacionales. Es un sistema integral para la gestión de calidad, cumplimiento y auditorías de procesos en una organización. Al ser un desarrollo de uso privado empresarial, únicamente se incluye el diseño interactivo en Figma.",
+      tech: ["UI/UX Design", "Figma", "Web Dashboard", "B2B SaaS Prototype"],
+      image: "/mi-calidad.svg",
+      figmaUrl: "https://www.figma.com/proto/nsolbQsjmt0mMwZYjRTpO3/ProyectoCalidad?t=7F98ppAdHLYH5gf7-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&node-id=0-1",
+      embedUrl: "https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2FnsolbQsjmt0mMwZYjRTpO3%2FProyectoCalidad%3Ft%3D7F98ppAdHLYH5gf7-0%26scaling%3Dscale-down%26content-scaling%3Dfixed%26page-id%3D0%253A1%26node-id%3D0-1%26hide-ui%3D1",
+      isFigma: true,
+      isMobile: false,
+      award: {
+        title: "1er Lugar - ExpoCiComp Otoño 2025",
+        description: "12.ª Edición - Primer lugar en la Exposición de Proyectos del Área de Ciencias de la Computación. Reconocimiento por un proyecto de software desarrollado durante tres semestres."
+      }
+    },
+    {
+      id: 4,
+      title: "ClickBos\n(Aplicación Móvil)",
+      description: "Aplicación móvil oficial de ClickBos desarrollada con React Native y conectada a la misma arquitectura backend con NestJS, PostgreSQL e IA de OpenAI. Permite gestionar tareas, espacios, módulos, tableros Kanban, formularios y analíticas en tiempo real. Proyecto en desarrollo.",
+      tech: ["React Native", "TypeScript", "NestJS", "PostgreSQL", "OpenAI API"],
+      image: "/clickbos_mobile/login.png",
+      images: [
+        "/clickbos_mobile/login.png",
+        "/clickbos_mobile/inicio.png",
+        "/clickbos_mobile/espacios.png",
+        "/clickbos_mobile/modulos.png",
+        "/clickbos_mobile/nova_flow.png",
+        "/clickbos_mobile/task.png",
+        "/clickbos_mobile/list.png",
+        "/clickbos_mobile/board.png",
+        "/clickbos_mobile/dashboard.png",
+        "/clickbos_mobile/form.png"
+      ],
+      github: "https://github.com/TheDarkfoxs",
+      figmaUrl: "https://www.figma.com/proto/A3Ectc2SReDv5oqcJWE8Fa/Nova-Flow-App-Screens?node-id=0-1&t=WcAlqcLtpitwAwep-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1",
+      embedUrl: "https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2FA3Ectc2SReDv5oqcJWE8Fa%2FNova-Flow-App-Screens%3Fnode-id%3D0-1%26t%3DWcAlqcLtpitwAwep-1%26scaling%3Dscale-down%26content-scaling%3Dfixed",
+      isFigma: true,
+      imageFit: "contain"
+    },
+    {
       id: 1,
       title: "FNAFdle\nGuess the FNAF Character",
       description: "Un juego interactivo estilo Wordle ambientado en el universo de Five Nights at Freddy's. Adivina el personaje secreto diario a partir de pistas dinámicas como su género, especie, color y juego debut.",
@@ -138,7 +175,7 @@ export const portfolioData = {
       image: "/fnafdle.png",
       github: "https://github.com/TheDarkfoxs",
       demo: "https://fnafdle.netlify.app/",
-      demoText: "Demo Live",
+      demoText: "Visitar Sitio",
       isFigma: false
     },
     {
@@ -162,32 +199,6 @@ export const portfolioData = {
       demo: "https://houstonitsecurity.net/",
       demoText: "Visitar Sitio",
       isFigma: false
-    },
-    {
-      id: 5,
-      title: "Sistema de Gestión de Calidad",
-      description: "Proyecto de 3 semestres desarrollado en la escuela para la materia de proyectos computacionales. Es un sistema integral para la gestión de calidad, cumplimiento y auditorías de procesos en una organización. Al ser un desarrollo de uso privado empresarial, únicamente se incluye el diseño interactivo en Figma.",
-      tech: ["UI/UX Design", "Figma", "Web Dashboard", "B2B SaaS Prototype"],
-      image: "/mi-calidad.svg",
-      figmaUrl: "https://www.figma.com/proto/nsolbQsjmt0mMwZYjRTpO3/ProyectoCalidad?t=7F98ppAdHLYH5gf7-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&node-id=0-1",
-      embedUrl: "https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2FnsolbQsjmt0mMwZYjRTpO3%2FProyectoCalidad%3Ft%3D7F98ppAdHLYH5gf7-0%26scaling%3Dscale-down%26content-scaling%3Dfixed%26page-id%3D0%253A1%26node-id%3D0-1",
-      isFigma: true,
-      isMobile: false,
-      award: {
-        title: "1er Lugar - ExpoCiComp Otoño 2025",
-        description: "12.ª Edición - Primer lugar en la Exposición de Proyectos del Área de Ciencias de la Computación. Reconocimiento por un proyecto de software desarrollado durante tres semestres."
-      }
-    },
-    {
-      id: 4,
-      title: "Mi Finanzas",
-      description: "Aplicación móvil funcional de finanzas personales. Fue desarrollada como un proyecto escolar para la materia de desarrollo móvil. Cuenta con flujos completos de registro de transacciones, análisis mensual e integración de presupuestos. Se incluye únicamente el diseño interactivo en Figma debido a la imposibilidad de ejecutar la aplicación nativa en el navegador.",
-      tech: ["React Native", "SQLite", "UI/UX Design", "Figma", "Functional App"],
-      image: "/mi-finanzas.svg",
-      figmaUrl: "https://www.figma.com/proto/4e6wudh28kE5NLVp1R2etz/MiFinanzas?t=hfj8IY2HyUuzTvFr-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&node-id=3-345",
-      embedUrl: "https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2F4e6wudh28kE5NLVp1R2etz%2FMiFinanzas%3Ft%3Dhfj8IY2HyUuzTvFr-1%26scaling%3Dscale-down%26content-scaling%3Dfixed%26page-id%3D0%253A1%26node-id%3D3-345",
-      isFigma: true,
-      isMobile: true
     }
   ]
 };

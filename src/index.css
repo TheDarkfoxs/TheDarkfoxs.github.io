@@ -684,9 +684,10 @@ section {
 
 .project-image.image-contain {
   object-fit: contain;
-  background: #ffffff;
-  padding: 0;
-  transform: scale(1.15);
+  background: transparent;
+  padding: 10px 0;
+  transform: scale(1);
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
 }
 
 .project-card:hover .project-image {
@@ -694,27 +695,7 @@ section {
 }
 
 .project-card:hover .project-image.image-contain {
-  transform: scale(1.2);
-}
-
-/* Custom styles for mobile project cards to show the full portrait screenshot */
-.project-card-mobile .project-image-wrapper {
-  padding-top: 56.25%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0.3) 100%);
-}
-
-.project-card-mobile .project-image {
-  height: 90%;
-  width: auto;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  object-fit: contain;
-  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
-}
-
-.project-card-mobile:hover .project-image {
-  transform: translate(-50%, -50%) scale(1.05);
+  transform: scale(1.05);
 }
 
 /* Badge for Recent / Featured Projects */
@@ -1155,9 +1136,9 @@ footer {
 }
 
 .prototype-modal-container {
-  width: 92%;
+  width: 94%;
   max-width: 1200px;
-  height: 85vh;
+  height: 90vh;
   background: var(--bg-card);
   border: 1px solid var(--glass-border);
   box-shadow: 
@@ -1173,35 +1154,33 @@ footer {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.prototype-modal-container.mobile-format {
-  max-width: 440px;
-}
-
 .prototype-modal-overlay.active .prototype-modal-container {
   transform: translateY(0) scale(1);
 }
 
 .prototype-modal-header {
-  height: 70px;
+  height: 65px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
+  padding: 0 1.8rem;
   border-bottom: 1px solid var(--glass-border);
   background: rgba(255, 255, 255, 0.02);
+  flex-shrink: 0;
 }
 
 .prototype-modal-title {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-primary);
+  margin: 0;
 }
 
 .prototype-modal-actions {
   display: flex;
   align-items: center;
-  gap: 1.2rem;
+  gap: 1rem;
 }
 
 .prototype-modal-btn {
@@ -1211,18 +1190,20 @@ footer {
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
-  padding: 0.5rem 1.2rem;
+  padding: 0.45rem 1.1rem;
   border-radius: 99px;
   transition: var(--transition-fast);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
+  white-space: nowrap;
 }
 
 .prototype-modal-btn:hover {
   background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 
 .prototype-modal-close {
@@ -1250,7 +1231,7 @@ footer {
 .prototype-modal-body {
   flex-grow: 1;
   position: relative;
-  background: var(--bg-space-gray);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.4) 100%);
 }
 
 .prototype-modal-iframe {
@@ -1312,6 +1293,9 @@ footer {
 /* Light theme overrides for Figma prototype modal */
 [data-theme='light'] .prototype-modal-header {
   background: rgba(14, 16, 20, 0.03);
+}
+[data-theme='light'] .prototype-modal-body {
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, rgba(220, 225, 235, 0.5) 100%);
 }
 [data-theme='light'] .prototype-modal-btn {
   background: rgba(14, 16, 20, 0.04);
@@ -2161,9 +2145,7 @@ footer {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border-radius: 12px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.45));
 }
 
 .lightbox-nav-btn {
@@ -2221,10 +2203,10 @@ footer {
   border-radius: 8px;
   overflow: hidden;
   border: 2px solid transparent;
-  background: transparent;
-  padding: 0;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px;
   cursor: pointer;
-  opacity: 0.5;
+  opacity: 0.6;
   transition: var(--transition-fast);
   flex-shrink: 0;
 }
@@ -2232,7 +2214,7 @@ footer {
 .lightbox-thumb-btn img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
