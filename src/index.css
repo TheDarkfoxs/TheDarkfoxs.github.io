@@ -276,6 +276,8 @@ body {
   background: linear-gradient(135deg, #fff 40%, rgba(255,255,255,0.6));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-links {
@@ -1048,15 +1050,36 @@ footer {
 
 /* Responsive */
 @media (max-width: 992px) {
+  .navbar-wrapper {
+    width: 96%;
+    gap: 10px;
+  }
+  .navbar {
+    padding: 0 1.2rem;
+  }
+  .logo {
+    font-size: 1.12rem;
+  }
+  .nav-links {
+    gap: 0.65rem;
+  }
+  .nav-links a {
+    font-size: 0.84rem;
+    padding: 0.4rem 0.65rem;
+  }
   .hero-name {
     font-size: 3.8rem;
   }
   .hero-title {
     font-size: 1.8rem;
   }
+  .hero-description {
+    max-width: 90%;
+    font-size: 1.05rem;
+  }
   .about-grid {
     grid-template-columns: 1fr;
-    gap: 4rem;
+    gap: 3.5rem;
   }
 }
 
@@ -1751,14 +1774,30 @@ footer {
 
 .interpersonal-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
   width: 100%;
+}
+
+@media (max-width: 992px) {
+  .interpersonal-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+  }
+  .interpersonal-card {
+    padding: 1.1rem 0.5rem;
+    min-height: 115px;
+  }
+  .interpersonal-card-title {
+    font-size: 0.88rem;
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
   .interpersonal-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 }
 
@@ -2301,5 +2340,23 @@ footer {
   .lightbox-thumb-btn {
     width: 62px;
     height: 42px;
+  }
+}
+
+@keyframes github-tail-wag {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-14deg);
+  }
+  40% {
+    transform: rotate(14deg);
+  }
+  60% {
+    transform: rotate(-10deg);
+  }
+  80% {
+    transform: rotate(10deg);
   }
 }

@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { portfolioData } from './data/portfolioData';
-import { GithubIcon } from './components/GithubIcon';
-import GlareHover from './components/GlareHover';
 import { 
   SiReact, 
   SiLaravel, 
@@ -91,8 +89,6 @@ function App() {
     if (savedTheme === 'dim') return '3';
     return '2'; // dark
   });
-
-  const githubIconRef = useRef(null);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -629,11 +625,9 @@ function App() {
                 className="social-btn" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                onMouseEnter={() => githubIconRef.current?.startAnimation()}
-                onMouseLeave={() => githubIconRef.current?.stopAnimation()}
               >
-                <GithubIcon ref={githubIconRef} size={20} />
-                GitHub
+                <SiGithub size={20} />
+                <span>GitHub</span>
               </a>
             </div>
             <a href={`mailto:${personalInfo.email}`} className="contact-email">
