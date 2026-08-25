@@ -665,13 +665,24 @@ section {
   transition: var(--transition-liquid);
 }
 
+.project-image.image-contain {
+  object-fit: contain;
+  background: #ffffff;
+  padding: 0;
+  transform: scale(1.15);
+}
+
 .project-card:hover .project-image {
   transform: scale(1.03);
 }
 
+.project-card:hover .project-image.image-contain {
+  transform: scale(1.2);
+}
+
 /* Custom styles for mobile project cards to show the full portrait screenshot */
 .project-card-mobile .project-image-wrapper {
-  padding-top: 85%;
+  padding-top: 56.25%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0.3) 100%);
 }
 
@@ -753,6 +764,7 @@ section {
 .project-tech-tags {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.45rem;
   margin-top: 0.9rem;
   margin-bottom: 1.2rem;

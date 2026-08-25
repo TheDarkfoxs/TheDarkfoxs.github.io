@@ -69,13 +69,37 @@ export const portfolioData = {
       id: 8,
       title: "Criatools - Creator OS",
       description: "Plataforma web integral para creadores de contenido impulsada por Inteligencia Artificial. Incluye herramientas de automatización, generador de guiones con IA, gestión de patrocinios, analíticas y utilidades avanzadas para optimizar la productividad y creación de contenido.",
-      tech: ["React.js", "TypeScript", "Vite", "Tailwind CSS", "Lucide Icons"],
+      tech: ["React.js", "Laravel", "TypeScript", "Vite", "Tailwind CSS", "Lucide Icons"],
       image: "/criatools.png",
       github: "https://github.com/TheDarkfoxs",
       demo: "https://criatools.com/",
       demoText: "Visitar Sitio",
       isFigma: false,
       badge: "Proyecto más reciente"
+    },
+    {
+      id: 10,
+      title: "ClickBos (Migración desde ClickUp)",
+      description: "Plataforma empresarial de gestión de tareas y proyectos migrada desde ClickUp. Cuenta con un frontend optimizado mediante arquitecturas robustas, y un asistente virtual de IA integrado con modelos de OpenAI para automatizar procesos mediante lenguaje natural.",
+      tech: ["React.js", "NestJS", "PostgreSQL", "OpenAI API", "TypeScript"],
+      image: "/clickbos.png",
+      github: "https://github.com/TheDarkfoxs",
+      demo: "https://novaflow.solislooms.com/auth/login",
+      demoText: "Visitar ClickBos",
+      isFigma: false,
+      imageFit: "contain"
+    },
+    {
+      id: 9,
+      title: "LoomSpot (Migración desde HubSpot)",
+      description: "CRM completo diseñado para la gestión y migración de relaciones con clientes. Incluye la integración de un Power Dialer con Aircall mediante APIs para la automatización de llamadas, y un módulo de mensajería omnicanal integrado con las APIs de Meta para WhatsApp y Messenger.",
+      tech: ["Laravel", "MySQL", "Meta API", "Aircall API", "HubSpot"],
+      image: "/crm.png",
+      github: "https://github.com/TheDarkfoxs",
+      demo: "https://loomsspot.com/auth/login",
+      demoText: "Visitar CRM",
+      isFigma: false,
+      imageFit: "contain"
     },
     {
       id: 7,
@@ -144,17 +168,6 @@ export const portfolioData = {
       image: "/mi-finanzas.svg",
       figmaUrl: "https://www.figma.com/proto/4e6wudh28kE5NLVp1R2etz/MiFinanzas?t=hfj8IY2HyUuzTvFr-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&node-id=3-345",
       embedUrl: "https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2F4e6wudh28kE5NLVp1R2etz%2FMiFinanzas%3Ft%3Dhfj8IY2HyUuzTvFr-1%26scaling%3Dscale-down%26content-scaling%3Dfixed%26page-id%3D0%253A1%26node-id%3D3-345",
-      isFigma: true,
-      isMobile: true
-    },
-    {
-      id: 6,
-      title: "Aplicación de Música",
-      description: "Prototipo interactivo de aplicación móvil para reproducción musical. Presenta un reproductor flotante minimalista, exploración de playlists, transiciones fluidas y un modo oscuro inmersivo.",
-      tech: ["UI/UX Design", "Figma", "Mobile App", "Music Player Prototype"],
-      image: "/mi-musica.svg",
-      figmaUrl: "https://www.figma.com/proto/N5olUbGATfW3rg3fCGvQls/Untitled?node-id=1-3&p=f&t=31iBSX9mqH57WtCh-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1",
-      embedUrl: "https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2FN5olUbGATfW3rg3fCGvQls%2FUntitled%3Fnode-id%3D1-3%26p%3Df%26t%3D31iBSX9mqH57WtCh-1%26scaling%3Dscale-down%26content-scaling%3Dfixed%26page-id%3D0%253A1",
       isFigma: true,
       isMobile: true
     }

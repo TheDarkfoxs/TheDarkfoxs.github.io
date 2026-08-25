@@ -480,7 +480,12 @@ function App() {
             {projects.map((project) => (
               <article key={project.id} className={`project-card ${project.isMobile ? 'project-card-mobile' : ''} ${project.badge ? 'project-card-highlight' : ''}`}>
                 <div className="project-image-wrapper">
-                  <img src={project.image} alt={project.title} className="project-image" loading="lazy" />
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    className={`project-image ${project.imageFit === 'contain' ? 'image-contain' : ''}`} 
+                    loading="lazy" 
+                  />
                 </div>
                 <div className="project-content">
                   {project.badge && (
