@@ -31,7 +31,8 @@ import {
   BsLightbulb,
   BsArrowLeftRight,
   BsLightningCharge,
-  BsPeople
+  BsPeople,
+  BsTrophyFill
 } from 'react-icons/bs';
 
 
@@ -152,6 +153,56 @@ function App() {
   };
 
   const { personalInfo, highlights, projects } = portfolioData;
+
+  const [projectImageIndexes, setProjectImageIndexes] = useState({});
+  const [activeLightboxProject, setActiveLightboxProject] = useState(null);
+  const [activeLightboxIndex, setActiveLightboxIndex] = useState(0);
+
+  const openLightbox = (e, project, initialIndex = 0) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const images = project.images && project.images.length > 0 ? project.images : [project.image];
+    setActiveLightboxProject({
+      ...project,
+      images
+    });
+    setActiveLightboxIndex(initialIndex);
+    document.body.classList.add('no-scroll');
+  };
+
+  const closeLightbox = () => {
+    setActiveLightboxProject(null);
+    setActiveLightboxIndex(0);
+    document.body.classList.remove('no-scroll');
+  };
+
+  const handleLightboxPrev = (e) => {
+    if (e) e.stopPropagation();
+    if (!activeLightboxProject) return;
+    const total = activeLightboxProject.images.length;
+    setActiveLightboxIndex((prev) => (prev - 1 + total) % total);
+  };
+
+  const handleLightboxNext = (e) => {
+    if (e) e.stopPropagation();
+    if (!activeLightboxProject) return;
+    const total = activeLightboxProject.images.length;
+    setActiveLightboxIndex((prev) => (prev + 1) % total);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (activeLightboxProject) {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') handleLightboxPrev();
+        if (e.key === 'ArrowRight') handleLightboxNext();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeLightboxProject]);
 
   const openFigmaPrototype = (embedUrl, figmaUrl, title, isMobile) => {
     setActiveFigmaTitle(title);
@@ -390,7 +441,6 @@ function App() {
       <main>
         {/* Hero Section */}
         <section id="home" className="hero">
-          <p className="hero-welcome">Portfolio Personal</p>
           <h1 className="hero-name">{personalInfo.name}</h1>
           <p className="hero-username">{personalInfo.username}</p>
           <h2 className="hero-title">{personalInfo.title}</h2>
@@ -440,20 +490,13 @@ function App() {
 
         {/* About Me Section */}
         <section id="about">
-          <h2 className="section-title">Habilidades & Especialidades</h2>
+          <h2 className="section-title">Habilidades y Especialidades</h2>
           <div className="skills-grid">
             {highlights.map((h, idx) => (
               <div key={idx} className="skill-card" style={{ '--accent-color': h.levelColor }}>
                 {/* Watermark Icon */}
                 <div className="skill-card-watermark">
                   {getHighlightIcon(h.iconName)}
-                </div>
-                
-                <div className="skill-card-header">
-                  {/* Icon Box */}
-                  <div className="skill-card-icon-box">
-                    {getHighlightIcon(h.iconName)}
-                  </div>
                 </div>
 
                 <h3 className="skill-card-title">{h.title}</h3>
@@ -477,82 +520,99 @@ function App() {
         <section id="projects">
           <h2 className="section-title">Mis Proyectos</h2>
           <div className="projects-grid">
-            {projects.map((project) => (
-              <article key={project.id} className={`project-card ${project.isMobile ? 'project-card-mobile' : ''} ${project.badge ? 'project-card-highlight' : ''}`}>
-                <div className="project-image-wrapper">
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className={`project-image ${project.imageFit === 'contain' ? 'image-contain' : ''}`} 
-                    loading="lazy" 
-                  />
-                </div>
-                <div className="project-content">
-                  {project.badge && (
-                    <div className="project-badge">
-                      <span className="badge-dot"></span>
-                      <span>{project.badge}</span>
-                    </div>
-                  )}
-                  <h3 className="project-title">{project.title}</h3>
-                  {project.award && (
-                    <div className="project-award-wrapper">
-                      <GlareHover
-                        width="100%"
-                        height="auto"
-                        background="linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(212, 175, 55, 0.03) 100%)"
-                        borderRadius="16px"
-                        borderColor="rgba(212, 175, 55, 0.25)"
-                        glareColor="#e5a93b"
-                        glareOpacity={0.3}
-                        glareAngle={-35}
-                        glareSize={200}
-                        transitionDuration={700}
-                        className="project-award-badge"
-                      >
-                        <div className="award-info">
-                          <span className="award-title">{project.award.title}</span>
-                        </div>
-                      </GlareHover>
-                      <div className="project-award-badge-medal" title={project.award.title}>
-                        🥇
+            {projects.map((project) => {
+              const projectImages = project.images && project.images.length > 0 ? project.images : [project.image];
+              const currentIndex = projectImageIndexes[project.id] || 0;
+              const currentImg = projectImages[currentIndex] || project.image;
+              const hasMultiple = projectImages.length > 1;
+
+              return (
+                <article key={project.id} className={`project-card ${project.isMobile ? 'project-card-mobile' : ''}`}>
+                  <div 
+                    className={`project-image-wrapper ${hasMultiple ? 'has-gallery' : ''}`}
+                    onClick={(e) => openLightbox(e, project, currentIndex)}
+                    title="Click para ver en pantalla completa"
+                  >
+                    <img 
+                      src={currentImg} 
+                      alt={`${project.title} - Imagen ${currentIndex + 1}`} 
+                      className={`project-image ${project.imageFit === 'contain' ? 'image-contain' : ''}`} 
+                      loading="lazy" 
+                    />
+
+                    {/* Fullscreen Expand Indicator Button */}
+                    <button 
+                      className="card-fullscreen-btn"
+                      onClick={(e) => openLightbox(e, project, currentIndex)}
+                      title="Ver en pantalla completa"
+                      aria-label="Ver en pantalla completa"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                      </svg>
+                    </button>
+
+                    {/* Floating badge for featured/recent projects */}
+                    {project.badge && (
+                      <div className={`card-floating-badge ${hasMultiple ? 'badge-left' : ''}`}>
+                        <span>{project.badge}</span>
                       </div>
-                    </div>
-                  )}
-                  <p className="project-desc">{project.description}</p>
-                  {project.tech && project.tech.length > 0 && (
-                    <div className="project-tech-tags">
-                      {project.tech.map((t, idx) => (
-                        <span key={idx} className="project-tech-tag">{t}</span>
-                      ))}
-                    </div>
-                  )}
-                  <div className="project-links">
-                    {project.isFigma ? (
-                      <a 
-                        href="#projects" 
-                        className="project-link" 
-                        onClick={(e) => { e.preventDefault(); openFigmaPrototype(project.embedUrl, project.figmaUrl, project.title, project.isMobile); }}
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polygon points="5 3 19 12 5 21 5 3" />
-                        </svg>
-                        Ver Prototipo
-                      </a>
-                    ) : (
-                      <a href={project.demo} className="project-link" target="_blank" rel="noopener noreferrer">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                          <polyline points="15 3 21 3 21 9" />
-                          <line x1="10" y1="14" x2="21" y2="3" />
-                        </svg>
-                        {project.demoText || "Visitar Sitio"}
-                      </a>
+                    )}
+
+                    {/* Floating badge for awards */}
+                    {project.award && (
+                      <div className={`card-floating-badge card-award-badge ${hasMultiple ? 'badge-left' : ''}`}>
+                        <div className="award-icon-wrapper">
+                          <BsTrophyFill className="award-icon" />
+                        </div>
+                        <span className="award-text">{project.award.title}</span>
+                      </div>
+                    )}
+
+                    {/* Counter badge if multiple images */}
+                    {hasMultiple && (
+                      <div className="card-gallery-counter">
+                        <span>{projectImages.length} capturas</span>
+                      </div>
                     )}
                   </div>
-                </div>
-              </article>
-            ))}
+                  <div className="project-content">
+                    <h3 className="project-title">{project.title}</h3>
+                    <p className="project-desc">{project.description}</p>
+                    {project.tech && project.tech.length > 0 && (
+                      <div className="project-tech-tags">
+                        {project.tech.map((t, idx) => (
+                          <span key={idx} className="project-tech-tag">{t}</span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="project-links">
+                      {project.isFigma ? (
+                        <a 
+                          href="#projects" 
+                          className="project-link" 
+                          onClick={(e) => { e.preventDefault(); openFigmaPrototype(project.embedUrl, project.figmaUrl, project.title, project.isMobile); }}
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                          </svg>
+                          Ver Prototipo
+                        </a>
+                      ) : (
+                        <a href={project.demo} className="project-link" target="_blank" rel="noopener noreferrer">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                            <polyline points="15 3 21 3 21 9" />
+                            <line x1="10" y1="14" x2="21" y2="3" />
+                          </svg>
+                          {project.demoText || "Visitar Sitio"}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
 
@@ -561,7 +621,7 @@ function App() {
           <h2 className="section-title">Contacto</h2>
           <div className="contact-container">
             <p className="contact-text">
-              ¿Quieres construir algo asombroso o simplemente conectar? Escríbeme y charlemos.
+              ¿Quieres construir algo asombroso o simplemente conectar?<br />Escríbeme y charlemos.
             </p>
             <div className="contact-socials">
               <a 
@@ -585,8 +645,96 @@ function App() {
 
       {/* Footer */}
       <footer>
-        <p>&copy; {new Date().getFullYear()} {personalInfo.name}. Hecho con React & Estilo Liquid Glass.</p>
+        <p>&copy; {new Date().getFullYear()} {personalInfo.name}. Hecho con React y Estilo Liquid Glass.</p>
       </footer>
+
+      {/* Fullscreen Image Lightbox Modal */}
+      <div 
+        className={`image-lightbox-overlay ${activeLightboxProject ? 'active' : ''}`}
+        onClick={closeLightbox}
+      >
+        {activeLightboxProject && (
+          <div 
+            className="image-lightbox-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="image-lightbox-header">
+              <div className="image-lightbox-info">
+                <h3 className="image-lightbox-title">{activeLightboxProject.title.replace('\n', ' ')}</h3>
+                {activeLightboxProject.images && activeLightboxProject.images.length > 1 && (
+                  <span className="image-lightbox-badge">
+                    {activeLightboxIndex === 0 ? 'Portada' : `Captura ${activeLightboxIndex} de ${activeLightboxProject.images.length - 1}`} ({activeLightboxIndex + 1}/{activeLightboxProject.images.length})
+                  </span>
+                )}
+              </div>
+              <div className="image-lightbox-actions">
+                <button 
+                  className="prototype-modal-close" 
+                  onClick={closeLightbox} 
+                  aria-label="Cerrar vista previa"
+                  title="Cerrar (Esc)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="image-lightbox-body">
+              <div className="image-lightbox-view">
+                <img 
+                  src={activeLightboxProject.images ? activeLightboxProject.images[activeLightboxIndex] : activeLightboxProject.image} 
+                  alt={`${activeLightboxProject.title} captura ${activeLightboxIndex + 1}`}
+                  className="image-lightbox-img"
+                />
+
+                {activeLightboxProject.images && activeLightboxProject.images.length > 1 && (
+                  <>
+                    <button 
+                      className="lightbox-nav-btn lightbox-prev"
+                      onClick={handleLightboxPrev}
+                      aria-label="Captura anterior"
+                      title="Anterior (Flecha izquierda)"
+                    >
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                    </button>
+
+                    <button 
+                      className="lightbox-nav-btn lightbox-next"
+                      onClick={handleLightboxNext}
+                      aria-label="Siguiente captura"
+                      title="Siguiente (Flecha derecha)"
+                    >
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {activeLightboxProject.images && activeLightboxProject.images.length > 1 && (
+                <div className="image-lightbox-thumbnails">
+                  {activeLightboxProject.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      className={`lightbox-thumb-btn ${idx === activeLightboxIndex ? 'active' : ''}`}
+                      onClick={() => setActiveLightboxIndex(idx)}
+                      title={idx === 0 ? "Portada" : `Captura ${idx}`}
+                    >
+                      <img src={img} alt="" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Figma Prototype Modal Lightbox */}
       <div 
