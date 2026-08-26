@@ -437,10 +437,12 @@ function App() {
       <main>
         {/* Hero Section */}
         <section id="home" className="hero">
-          <h1 className="hero-name">{personalInfo.name}</h1>
-          <p className="hero-username">{personalInfo.username}</p>
-          <h2 className="hero-title">{personalInfo.title}</h2>
-          <p className="hero-description">{personalInfo.subtitle}</p>
+          <div className="hero-content-group">
+            <h1 className="hero-name">{personalInfo.name}</h1>
+            <p className="hero-username">{personalInfo.username}</p>
+            <h2 className="hero-title">{personalInfo.title}</h2>
+            <p className="hero-description">{personalInfo.subtitle}</p>
+          </div>
           <div className="hero-ctas">
             <a href="#projects" className="btn btn-primary" onClick={(e) => { e.preventDefault(); handleNavClick('projects'); }}>
               Ver Proyectos
