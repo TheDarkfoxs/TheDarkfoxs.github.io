@@ -706,8 +706,8 @@ section {
 .project-image.image-contain {
   object-fit: contain;
   background: transparent;
-  padding: 10px 0;
-  transform: scale(1);
+  padding: 0;
+  transform: scale(1.15);
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
 }
 
@@ -716,7 +716,17 @@ section {
 }
 
 .project-card:hover .project-image.image-contain {
-  transform: scale(1.05);
+  transform: scale(1.2);
+}
+
+.project-card-mobile .project-image.image-contain {
+  transform: scale(0.98);
+  padding: 10px 0;
+  box-sizing: border-box;
+}
+
+.project-card-mobile:hover .project-image.image-contain {
+  transform: scale(1.03);
 }
 
 /* Badge for Recent / Featured Projects */
