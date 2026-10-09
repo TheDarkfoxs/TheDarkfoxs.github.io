@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { flushSync } from 'react-dom';
-import { portfolioData } from './data/portfolioData';
+import { portfolioData, uiTranslations } from './data/portfolioData';
 import { 
   SiReact, 
   SiLaravel, 
@@ -26,12 +26,14 @@ import {
   BsRocket, 
   BsDiagram3, 
   BsCloud,
-  BsLightbulb,
-  BsArrowLeftRight,
-  BsLightningCharge,
-  BsPeople,
   BsTrophyFill
 } from 'react-icons/bs';
+import { 
+  LuUsers, 
+  LuLightbulb, 
+  LuWorkflow, 
+  LuZap 
+} from 'react-icons/lu';
 
 
 const SiAmazons3 = ({ color, ...props }) => (
@@ -78,16 +80,22 @@ function App() {
   const [activeFigmaIsMobile, setActiveFigmaIsMobile] = useState(false);
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') || 'dark';
+      const saved = localStorage.getItem('theme');
+      return saved === 'light' ? 'light' : 'dark';
     }
     return 'dark';
   });
 
+  const [lang, setLang] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('lang') || 'es';
+    }
+    return 'es';
+  });
+
   const [prevOption, setPrevOption] = useState(() => {
     const savedTheme = (typeof window !== 'undefined' ? localStorage.getItem('theme') : null) || 'dark';
-    if (savedTheme === 'light') return '1';
-    if (savedTheme === 'dim') return '3';
-    return '2'; // dark
+    return savedTheme === 'light' ? '1' : '2';
   });
 
   useEffect(() => {
@@ -95,13 +103,23 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    document.documentElement.setAttribute('lang', lang);
+    document.title = lang === 'es' ? 'Mi Portafolio' : 'My Portfolio';
+  }, [lang]);
+
+  const handleLangToggle = (e) => {
+    const nextLang = e.target.checked ? 'en' : 'es';
+    setLang(nextLang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('lang', nextLang);
+    }
+  };
+
   const handleThemeChange = (e, nextTheme) => {
     if (theme === nextTheme) return;
 
-    let prevIndex = '2';
-    if (theme === 'light') prevIndex = '1';
-    if (theme === 'dim') prevIndex = '3';
-    setPrevOption(prevIndex);
+    setPrevOption(theme === 'light' ? '1' : '2');
 
     if (!document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setTheme(nextTheme);
@@ -148,11 +166,46 @@ function App() {
     });
   };
 
-  const { personalInfo, highlights, projects } = portfolioData;
+  const currentLangData = portfolioData[lang] || portfolioData.es;
+  const t = uiTranslations[lang] || uiTranslations.es;
+  const { personalInfo, highlights, projects } = currentLangData;
 
   const [projectImageIndexes, setProjectImageIndexes] = useState({});
   const [activeLightboxProject, setActiveLightboxProject] = useState(null);
   const [activeLightboxIndex, setActiveLightboxIndex] = useState(0);
+  const [zoomScale, setZoomScale] = useState(1);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef({ startX: 0, startY: 0, posX: 0, posY: 0 });
+  const lightboxViewRef = useRef(null);
+  const lightboxImgRef = useRef(null);
+
+  const clampPosition = (x, y, scale) => {
+    const container = lightboxViewRef.current;
+    const img = lightboxImgRef.current;
+    if (!container || !img || scale <= 1) return { x: 0, y: 0 };
+
+    const cRect = container.getBoundingClientRect();
+    const baseW = img.offsetWidth || cRect.width * 0.8;
+    const baseH = img.offsetHeight || cRect.height * 0.8;
+
+    const scaledW = baseW * scale;
+    const scaledH = baseH * scale;
+
+    const maxX = Math.max(0, (scaledW - cRect.width) / 2) + Math.min(cRect.width * 0.2, 100);
+    const maxY = Math.max(0, (scaledH - cRect.height) / 2) + Math.min(cRect.height * 0.2, 100);
+
+    return {
+      x: Math.max(-maxX, Math.min(maxX, x)),
+      y: Math.max(-maxY, Math.min(maxY, y))
+    };
+  };
+
+  const resetZoom = () => {
+    setZoomScale(1);
+    setZoomPosition({ x: 0, y: 0 });
+    setIsDragging(false);
+  };
 
   const openLightbox = (e, project, initialIndex = 0) => {
     if (e) {
@@ -165,27 +218,109 @@ function App() {
       images
     });
     setActiveLightboxIndex(initialIndex);
+    resetZoom();
     document.body.classList.add('no-scroll');
   };
 
   const closeLightbox = () => {
     setActiveLightboxProject(null);
     setActiveLightboxIndex(0);
+    resetZoom();
     document.body.classList.remove('no-scroll');
   };
 
+  const changeLightboxSlide = (newIndex) => {
+    if (newIndex === activeLightboxIndex) return;
+    setZoomScale(1);
+    setZoomPosition({ x: 0, y: 0 });
+    setIsDragging(false);
+    setActiveLightboxIndex(newIndex);
+  };
+
   const handleLightboxPrev = (e) => {
-    if (e) e.stopPropagation();
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     if (!activeLightboxProject) return;
     const total = activeLightboxProject.images.length;
-    setActiveLightboxIndex((prev) => (prev - 1 + total) % total);
+    const targetIndex = (activeLightboxIndex - 1 + total) % total;
+    changeLightboxSlide(targetIndex);
   };
 
   const handleLightboxNext = (e) => {
-    if (e) e.stopPropagation();
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     if (!activeLightboxProject) return;
     const total = activeLightboxProject.images.length;
-    setActiveLightboxIndex((prev) => (prev + 1) % total);
+    const targetIndex = (activeLightboxIndex + 1) % total;
+    changeLightboxSlide(targetIndex);
+  };
+
+  useEffect(() => {
+    const el = lightboxViewRef.current;
+    if (!el || !activeLightboxProject) return;
+
+    const onWheel = (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.18 : 0.85;
+      setZoomScale((prev) => {
+        const next = Math.min(Math.max(1, prev * zoomFactor), 4.5);
+        if (next <= 1.02) {
+          setZoomPosition({ x: 0, y: 0 });
+          return 1;
+        }
+        setZoomPosition((prevPos) => clampPosition(prevPos.x, prevPos.y, next));
+        return next;
+      });
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+    };
+  }, [activeLightboxProject]);
+
+  const handlePointerDown = (e) => {
+    if (zoomScale <= 1 || e.target.closest('button')) return;
+    setIsDragging(true);
+    dragStartRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      posX: zoomPosition.x,
+      posY: zoomPosition.y
+    };
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch (err) {}
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDragging || zoomScale <= 1) return;
+    const dx = e.clientX - dragStartRef.current.startX;
+    const dy = e.clientY - dragStartRef.current.startY;
+    const rawX = dragStartRef.current.posX + dx;
+    const rawY = dragStartRef.current.posY + dy;
+    setZoomPosition(clampPosition(rawX, rawY, zoomScale));
+  };
+
+  const handlePointerUp = (e) => {
+    if (isDragging) {
+      setIsDragging(false);
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch (err) {}
+    }
+  };
+
+  const handleImageDoubleClick = () => {
+    if (zoomScale > 1) {
+      resetZoom();
+    } else {
+      setZoomScale(2.2);
+    }
   };
 
   useEffect(() => {
@@ -198,7 +333,7 @@ function App() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeLightboxProject]);
+  }, [activeLightboxProject, activeLightboxIndex, zoomScale]);
 
   const openFigmaPrototype = (embedUrl, figmaUrl, title, isMobile) => {
     setActiveFigmaTitle(title);
@@ -259,14 +394,25 @@ function App() {
     };
 
     updateIndicator();
+    const raf = requestAnimationFrame(updateIndicator);
     const timer = setTimeout(updateIndicator, 50);
 
     window.addEventListener('resize', updateIndicator);
+
+    const container = document.querySelector('.nav-links');
+    let ro = null;
+    if (container && typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(updateIndicator);
+      ro.observe(container);
+    }
+
     return () => {
+      cancelAnimationFrame(raf);
       clearTimeout(timer);
       window.removeEventListener('resize', updateIndicator);
+      if (ro) ro.disconnect();
     };
-  }, [activeSection, menuOpen]);
+  }, [activeSection, menuOpen, lang]);
 
 
   const toggleMenu = () => {
@@ -299,7 +445,7 @@ function App() {
         <div className="navbar-fixed-container">
           <nav className="navbar" id="main-nav">
             <a href="#home" className="logo" onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}>
-              Mi Portafolio
+              {t.logo}
             </a>
 
             {/* Navigation links */}
@@ -326,7 +472,7 @@ function App() {
                   className={activeSection === 'home' ? 'active' : ''}
                   onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}
                 >
-                  Inicio
+                  {t.navHome}
                 </a>
               </li>
               <li>
@@ -335,7 +481,7 @@ function App() {
                   className={activeSection === 'about' ? 'active' : ''}
                   onClick={(e) => { e.preventDefault(); handleNavClick('about'); }}
                 >
-                  Habilidades
+                  {t.navSkills}
                 </a>
               </li>
               <li>
@@ -344,7 +490,7 @@ function App() {
                   className={activeSection === 'projects' ? 'active' : ''}
                   onClick={(e) => { e.preventDefault(); handleNavClick('projects'); }}
                 >
-                  Proyectos
+                  {t.navProjects}
                 </a>
               </li>
               <li>
@@ -353,13 +499,33 @@ function App() {
                   className={activeSection === 'contact' ? 'active' : ''}
                   onClick={(e) => { e.preventDefault(); handleNavClick('contact'); }}
                 >
-                  Contacto
+                  {t.navContact}
                 </a>
               </li>
             </ul>
 
-            {/* Actions (Menu toggle only) */}
+            {/* Actions (Language Switch & Mobile Menu Toggle) */}
             <div className="nav-actions">
+              <div className="lang-switch-wrapper">
+                <input 
+                  type="checkbox" 
+                  id="lang-toggle" 
+                  className="lang-checkbox" 
+                  checked={lang === 'en'} 
+                  onChange={handleLangToggle} 
+                  aria-label={t.langAria}
+                />
+                <label 
+                  className="lang-switch" 
+                  htmlFor="lang-toggle" 
+                  title={t.langSwitchTitle(lang)}
+                >
+                  <span className="lang-slider" />
+                  <span className="lang-code lang-code-es">ES</span>
+                  <span className="lang-code lang-code-en">EN</span>
+                </label>
+              </div>
+
               <button 
                 className="menu-toggle" 
                 onClick={toggleMenu} 
@@ -376,9 +542,9 @@ function App() {
 
         {/* Floating Theme Switcher Outside */}
         <fieldset className="switcher" c-previous={prevOption}>
-          <legend className="switcher__legend">Seleccionar Tema</legend>
+          <legend className="switcher__legend">{t.themeSelectLegend}</legend>
           
-          <label className="switcher__option" title="Modo Claro">
+          <label className="switcher__option" title={t.themeLight}>
             <input 
               type="radio" 
               name="theme-switcher" 
@@ -401,33 +567,18 @@ function App() {
             </svg>
           </label>
 
-          <label className="switcher__option" title="Modo Oscuro">
+          <label className="switcher__option" title={t.themeDark}>
             <input 
               type="radio" 
               name="theme-switcher" 
               value="dark" 
               checked={theme === 'dark'} 
-              onChange={(e) => handleThemeChange(e, 'dark', '2')} 
+              onChange={(e) => handleThemeChange(e, 'dark')} 
               className="switcher__input"
               c-option="2"
             />
             <svg className="switcher__icon moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          </label>
-
-          <label className="switcher__option" title="Modo Tenue">
-            <input 
-              type="radio" 
-              name="theme-switcher" 
-              value="dim" 
-              checked={theme === 'dim'} 
-              onChange={(e) => handleThemeChange(e, 'dim', '3')} 
-              className="switcher__input"
-              c-option="3"
-            />
-            <svg className="switcher__icon star-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
           </label>
         </fieldset>
@@ -439,48 +590,55 @@ function App() {
         <section id="home" className="hero">
           <div className="hero-content-group">
             <h1 className="hero-name">{personalInfo.name}</h1>
-            <p className="hero-username">{personalInfo.username}</p>
-            <h2 className="hero-title">{personalInfo.title}</h2>
-            <p className="hero-description">{personalInfo.subtitle}</p>
+            <h2 key={`hero-title-${lang}`} className="hero-title lang-animate lang-stagger-1">{personalInfo.title}</h2>
+            <p key={`hero-desc-${lang}`} className="hero-description lang-animate lang-stagger-2">{personalInfo.subtitle}</p>
           </div>
-          <div className="hero-ctas">
+          <div key={`hero-ctas-${lang}`} className="hero-ctas lang-animate lang-stagger-3">
             <a href="#projects" className="btn btn-primary" onClick={(e) => { e.preventDefault(); handleNavClick('projects'); }}>
-              Ver Proyectos
+              {t.heroViewProjects}
             </a>
             <a href="#contact" className="btn btn-secondary" onClick={(e) => { e.preventDefault(); handleNavClick('contact'); }}>
-              Contactar
+              {t.heroContact}
             </a>
           </div>
 
           {/* Interpersonal skills */}
           <div className="interpersonal-section">
             <div className="interpersonal-grid">
-              <div className="interpersonal-card">
-                <div className="interpersonal-card-icon">
-                  <BsPeople />
+              <div key={`ip-1-${lang}`} className="interpersonal-card lang-animate lang-stagger-2" style={{ '--card-accent': '#0ea5e9' }}>
+                <div className="interpersonal-card-icon-wrapper">
+                  <div className="interpersonal-card-icon">
+                    <LuUsers />
+                  </div>
                 </div>
-                <h4 className="interpersonal-card-title">Trabajo en equipo</h4>
+                <h4 className="interpersonal-card-title">{t.teamwork}</h4>
               </div>
 
-              <div className="interpersonal-card">
-                <div className="interpersonal-card-icon">
-                  <BsLightbulb />
+              <div key={`ip-2-${lang}`} className="interpersonal-card lang-animate lang-stagger-3" style={{ '--card-accent': '#f59e0b' }}>
+                <div className="interpersonal-card-icon-wrapper">
+                  <div className="interpersonal-card-icon">
+                    <LuLightbulb />
+                  </div>
                 </div>
-                <h4 className="interpersonal-card-title">Resolución de problemas</h4>
+                <h4 className="interpersonal-card-title">{t.problemSolving}</h4>
               </div>
 
-              <div className="interpersonal-card">
-                <div className="interpersonal-card-icon">
-                  <BsArrowLeftRight />
+              <div key={`ip-3-${lang}`} className="interpersonal-card lang-animate lang-stagger-4" style={{ '--card-accent': '#10b981' }}>
+                <div className="interpersonal-card-icon-wrapper">
+                  <div className="interpersonal-card-icon">
+                    <LuWorkflow />
+                  </div>
                 </div>
-                <h4 className="interpersonal-card-title">Adaptabilidad</h4>
+                <h4 className="interpersonal-card-title">{t.adaptability}</h4>
               </div>
 
-              <div className="interpersonal-card">
-                <div className="interpersonal-card-icon">
-                  <BsLightningCharge />
+              <div key={`ip-4-${lang}`} className="interpersonal-card lang-animate lang-stagger-5" style={{ '--card-accent': '#8b5cf6' }}>
+                <div className="interpersonal-card-icon-wrapper">
+                  <div className="interpersonal-card-icon">
+                    <LuZap />
+                  </div>
                 </div>
-                <h4 className="interpersonal-card-title">Proactividad</h4>
+                <h4 className="interpersonal-card-title">{t.proactivity}</h4>
               </div>
             </div>
           </div>
@@ -488,10 +646,10 @@ function App() {
 
         {/* About Me Section */}
         <section id="about">
-          <h2 className="section-title">Habilidades y Especialidades</h2>
+          <h2 key={`skills-title-${lang}`} className="section-title lang-animate lang-stagger-1">{t.skillsSectionTitle}</h2>
           <div className="skills-grid">
             {highlights.map((h, idx) => (
-              <div key={idx} className="skill-card" style={{ '--accent-color': h.levelColor }}>
+              <div key={`${lang}-highlight-${idx}`} className={`skill-card lang-animate lang-stagger-${(idx % 4) + 1}`} style={{ '--accent-color': h.levelColor }}>
                 {/* Watermark Icon */}
                 <div className="skill-card-watermark">
                   {getHighlightIcon(h.iconName)}
@@ -516,16 +674,16 @@ function App() {
 
         {/* Projects Section */}
         <section id="projects">
-          <h2 className="section-title">Mis Proyectos</h2>
+          <h2 key={`projects-title-${lang}`} className="section-title lang-animate lang-stagger-1">{t.projectsSectionTitle}</h2>
           <div className="projects-grid">
-            {projects.map((project) => {
+            {projects.map((project, pIdx) => {
               const projectImages = project.images && project.images.length > 0 ? project.images : [project.image];
               const currentIndex = projectImageIndexes[project.id] || 0;
               const currentImg = projectImages[currentIndex] || project.image;
               const hasMultiple = projectImages.length > 1;
 
               return (
-                <article key={project.id} className={`project-card ${project.isMobile ? 'project-card-mobile' : ''}`}>
+                <article key={`${project.id}-${lang}`} className={`project-card ${project.isMobile ? 'project-card-mobile' : ''} lang-animate lang-stagger-${(pIdx % 4) + 1}`}>
                   <div 
                     className={`project-image-wrapper ${hasMultiple ? 'has-gallery' : ''}`}
                     onClick={(e) => openLightbox(e, project, currentIndex)}
@@ -541,7 +699,7 @@ function App() {
                     <button 
                       className="card-fullscreen-btn"
                       onClick={(e) => openLightbox(e, project, currentIndex)}
-                      aria-label="Ver en pantalla completa"
+                      aria-label={t.viewFullscreen}
                     >
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
@@ -568,7 +726,7 @@ function App() {
                     {/* Counter badge if multiple images */}
                     {hasMultiple && (
                       <div className="card-gallery-counter">
-                        <span>{projectImages.length} capturas</span>
+                        <span>{t.screenshotsCount(projectImages.length)}</span>
                       </div>
                     )}
                   </div>
@@ -577,8 +735,8 @@ function App() {
                     <p className="project-desc">{project.description}</p>
                     {project.tech && project.tech.length > 0 && (
                       <div className="project-tech-tags">
-                        {project.tech.map((t, idx) => (
-                          <span key={idx} className="project-tech-tag">{t}</span>
+                        {project.tech.map((techItem, idx) => (
+                          <span key={idx} className="project-tech-tag">{techItem}</span>
                         ))}
                       </div>
                     )}
@@ -592,7 +750,7 @@ function App() {
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polygon points="5 3 19 12 5 21 5 3" />
                           </svg>
-                          Ver Prototipo
+                          {t.viewPrototype}
                         </a>
                       ) : project.demo ? (
                         <a href={project.demo} className="project-link" target="_blank" rel="noopener noreferrer">
@@ -613,7 +771,7 @@ function App() {
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
                           </svg>
-                          Ver Capturas
+                          {t.viewScreenshots}
                         </button>
                       )}
                     </div>
@@ -626,10 +784,10 @@ function App() {
 
         {/* Contact Section */}
         <section id="contact">
-          <h2 className="section-title">Contacto</h2>
+          <h2 key={`contact-title-${lang}`} className="section-title lang-animate lang-stagger-1">{t.contactSectionTitle}</h2>
           <div className="contact-container">
-            <p className="contact-text">
-              ¿Quieres construir algo asombroso o simplemente conectar?<br />Escríbeme y charlemos.
+            <p key={`contact-text-${lang}`} className="contact-text lang-animate lang-stagger-2">
+              {t.contactTextLine1}<br />{t.contactTextLine2}
             </p>
             <div className="contact-socials">
               <a 
@@ -651,7 +809,7 @@ function App() {
 
       {/* Footer */}
       <footer>
-        <p>&copy; {new Date().getFullYear()} {personalInfo.name}. Hecho con React y Estilo Liquid Glass.</p>
+        <p>{t.footerText(new Date().getFullYear(), personalInfo.name)}</p>
       </footer>
 
       {/* Fullscreen Image Lightbox Modal */}
@@ -666,19 +824,58 @@ function App() {
           >
             <div className="image-lightbox-header">
               <div className="image-lightbox-info">
-                <h3 className="image-lightbox-title">{activeLightboxProject.title.replace('\n', ' ')}</h3>
+                <h3 className="image-lightbox-title">
+                  {(projects.find(p => p.id === activeLightboxProject.id)?.title || activeLightboxProject.title).replace('\n', ' ')}
+                </h3>
                 {activeLightboxProject.images && activeLightboxProject.images.length > 1 && (
                   <span className="image-lightbox-badge">
-                    {activeLightboxIndex === 0 ? 'Portada' : `Captura ${activeLightboxIndex} de ${activeLightboxProject.images.length - 1}`} ({activeLightboxIndex + 1}/{activeLightboxProject.images.length})
+                    {activeLightboxIndex === 0 ? t.lightboxCover : t.lightboxCapture(activeLightboxIndex, activeLightboxProject.images.length - 1)} ({activeLightboxIndex + 1}/{activeLightboxProject.images.length})
                   </span>
                 )}
               </div>
               <div className="image-lightbox-actions">
+                <div className="lightbox-zoom-controls">
+                  <button 
+                    className="lightbox-zoom-btn" 
+                    onClick={() => setZoomScale(s => {
+                      const next = Math.max(1, s - 0.35);
+                      if (next === 1) setZoomPosition({ x: 0, y: 0 });
+                      return next;
+                    })}
+                    disabled={zoomScale <= 1}
+                    title={t.zoomOut}
+                    aria-label={t.zoomOut}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </button>
+                  <span 
+                    className="lightbox-zoom-level" 
+                    onClick={resetZoom}
+                    title={t.zoomReset}
+                  >
+                    {Math.round(zoomScale * 100)}%
+                  </span>
+                  <button 
+                    className="lightbox-zoom-btn" 
+                    onClick={() => setZoomScale(s => Math.min(4.5, s + 0.35))}
+                    disabled={zoomScale >= 4.5}
+                    title={t.zoomIn}
+                    aria-label={t.zoomIn}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </button>
+                </div>
+
                 <button 
                   className="prototype-modal-close" 
                   onClick={closeLightbox} 
-                  aria-label="Cerrar vista previa"
-                  title="Cerrar (Esc)"
+                  aria-label={t.closePreview}
+                  title={t.closeEsc}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -689,39 +886,56 @@ function App() {
             </div>
 
             <div className="image-lightbox-body">
-              <div className="image-lightbox-view">
+              <div 
+                className={`image-lightbox-view ${zoomScale > 1 ? 'is-zoomed' : ''} ${isDragging ? 'is-dragging' : ''}`}
+                ref={lightboxViewRef}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onDoubleClick={handleImageDoubleClick}
+              >
                 <img 
+                  ref={lightboxImgRef}
                   src={activeLightboxProject.images ? activeLightboxProject.images[activeLightboxIndex] : activeLightboxProject.image} 
                   alt={`${activeLightboxProject.title} captura ${activeLightboxIndex + 1}`}
                   className="image-lightbox-img"
+                  style={{
+                    transform: `translate(${zoomPosition.x}px, ${zoomPosition.y}px) scale(${zoomScale})`,
+                    transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
+                    cursor: zoomScale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in'
+                  }}
+                  draggable={false}
                 />
-
-                {activeLightboxProject.images && activeLightboxProject.images.length > 1 && (
-                  <>
-                    <button 
-                      className="lightbox-nav-btn lightbox-prev"
-                      onClick={handleLightboxPrev}
-                      aria-label="Captura anterior"
-                      title="Anterior (Flecha izquierda)"
-                    >
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                      </svg>
-                    </button>
-
-                    <button 
-                      className="lightbox-nav-btn lightbox-next"
-                      onClick={handleLightboxNext}
-                      aria-label="Siguiente captura"
-                      title="Siguiente (Flecha derecha)"
-                    >
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </button>
-                  </>
-                )}
               </div>
+
+              {activeLightboxProject.images && activeLightboxProject.images.length > 1 && (
+                <>
+                  <button 
+                    className="lightbox-nav-btn lightbox-prev"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={handleLightboxPrev}
+                    aria-label={t.prevArrow}
+                    title={t.prevArrow}
+                  >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+
+                  <button 
+                    className="lightbox-nav-btn lightbox-next"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={handleLightboxNext}
+                    aria-label={t.nextArrow}
+                    title={t.nextArrow}
+                  >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                </>
+              )}
 
               {activeLightboxProject.images && activeLightboxProject.images.length > 1 && (
                 <div className="image-lightbox-thumbnails">
@@ -729,8 +943,9 @@ function App() {
                     <button
                       key={idx}
                       className={`lightbox-thumb-btn ${idx === activeLightboxIndex ? 'active' : ''}`}
-                      onClick={() => setActiveLightboxIndex(idx)}
-                      title={idx === 0 ? "Portada" : `Captura ${idx}`}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={() => changeLightboxSlide(idx)}
+                      title={idx === 0 ? t.lightboxCover : `${t.lightboxCover === 'Portada' ? 'Captura' : 'Screenshot'} ${idx}`}
                     >
                       <img src={img} alt="" />
                     </button>
@@ -754,8 +969,10 @@ function App() {
           >
             <div className="image-lightbox-header">
               <div className="image-lightbox-info">
-                <h3 className="image-lightbox-title">{activeFigmaTitle.replace('\n', ' ')}</h3>
-                <span className="image-lightbox-badge">Prototipo Figma</span>
+                <h3 className="image-lightbox-title">
+                  {(projects.find(p => p.figmaUrl === activeFigmaUrl)?.title || activeFigmaTitle).replace('\n', ' ')}
+                </h3>
+                <span className="image-lightbox-badge">{t.figmaBadge}</span>
               </div>
               <div className="image-lightbox-actions">
                 {activeFigmaUrl && (
@@ -770,14 +987,14 @@ function App() {
                       <polyline points="15 3 21 3 21 9" />
                       <line x1="10" y1="14" x2="21" y2="3" />
                     </svg>
-                    <span>Abrir en Figma</span>
+                    <span>{t.openInFigma}</span>
                   </a>
                 )}
                 <button 
                   className="prototype-modal-close" 
                   onClick={closeFigmaPrototype} 
-                  aria-label="Cerrar prototipo"
-                  title="Cerrar (Esc)"
+                  aria-label={t.closePrototype}
+                  title={t.closeEsc}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -790,7 +1007,7 @@ function App() {
               {iframeLoading && (
                 <div className="prototype-modal-loader">
                   <div className="spinner"></div>
-                  <p>Cargando prototipo interactivo...</p>
+                  <p>{t.loadingPrototype}</p>
                 </div>
               )}
               <iframe
@@ -798,7 +1015,7 @@ function App() {
                 className="prototype-modal-iframe"
                 allowFullScreen
                 onLoad={() => setIframeLoading(false)}
-                title="Prototipo Interactivo"
+                title={t.interactivePrototype}
               />
             </div>
           </div>
