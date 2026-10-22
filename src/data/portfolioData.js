@@ -50,11 +50,11 @@ export const portfolioData = {
     skills: [
       {
         category: "Lenguajes y Frameworks",
-        items: ["JavaScript", "PHP", "C", "React", "Laravel", "React Native", "Flutter"]
+        items: ["JavaScript", "TypeScript", "PHP", "C", "React", "Laravel", "React Native", "Flutter"]
       },
       {
         category: "Bases de Datos y Cloud",
-        items: ["MySQL", "PostgreSQL", "MongoDB", "Firebase", "Amazon S3"]
+        items: ["MySQL", "PostgreSQL", "Firebase", "Amazon S3"]
       },
       {
         category: "Herramientas y Especialidades",
@@ -68,7 +68,7 @@ export const portfolioData = {
     projects: [
       {
         id: 8,
-        title: "Criatools - Creator OS",
+        title: "Criatools",
         description: "Plataforma web integral para creadores de contenido impulsada por Inteligencia Artificial. Incluye herramientas de automatización, generador de guiones con IA, gestión de patrocinios, analíticas y utilidades avanzadas para optimizar la productividad y creación de contenido.",
         tech: ["React.js", "Laravel", "TypeScript", "Vite", "Tailwind CSS", "Lucide Icons"],
         image: "/criatools.webp",
@@ -80,7 +80,7 @@ export const portfolioData = {
       },
       {
         id: 10,
-        title: "ClickBos (Migración desde ClickUp)",
+        title: "ClickBos\n(Migración desde ClickUp)",
         description: "Plataforma empresarial de gestión de tareas y proyectos migrada desde ClickUp. Cuenta con un frontend optimizado mediante arquitecturas robustas, y un asistente virtual de IA integrado con modelos de OpenAI para automatizar procesos mediante lenguaje natural.",
         tech: ["React.js", "NestJS", "PostgreSQL", "OpenAI API", "TypeScript"],
         image: "/clickbos.webp",
@@ -102,7 +102,7 @@ export const portfolioData = {
       },
       {
         id: 9,
-        title: "LoomSpot (Migración desde HubSpot)",
+        title: "LoomSpot\n(Migración desde HubSpot)",
         description: "CRM completo diseñado para la gestión y migración de relaciones con clientes. Incluye la integración de un Power Dialer con Aircall mediante APIs para la automatización de llamadas, y un módulo de mensajería omnicanal integrado con las APIs de Meta para WhatsApp y Messenger.",
         tech: ["Laravel", "MySQL", "Meta API", "Aircall API", "HubSpot"],
         image: "/crm.webp",
@@ -227,7 +227,7 @@ export const portfolioData = {
       name: "Jonatan Martínez",
       username: "@TheDarkfoxs",
       title: "Intelligent Systems Engineer",
-      subtitle: "Software engineer focused on creating scalable and efficient technological solutions. Specialized in enterprise platform development, with a strong focus on automation and user experience. Known for adaptability, continuous learning, and a collaborative problem-solving approach.",
+      subtitle: "Software engineer focused on creating scalable and efficient technological solutions. Specialized in enterprise platform development, with a strong focus on automation and user experience. Known for adaptability, continuous learning, and a collaborative problem-solving approach.",
       bio: "Passionate software developer dedicated to crafting interactive, responsive, and visually striking digital experiences. Specialized in React, modern frontend development, and creating premium user interfaces that engage users from the very first glance.",
       location: "Mexico",
       email: "jonatanu24mtz@gmail.com",
@@ -273,11 +273,11 @@ export const portfolioData = {
     skills: [
       {
         category: "Languages & Frameworks",
-        items: ["JavaScript", "PHP", "C", "React", "Laravel", "React Native", "Flutter"]
+        items: ["JavaScript", "TypeScript", "PHP", "C", "React", "Laravel", "React Native", "Flutter"]
       },
       {
         category: "Databases & Cloud",
-        items: ["MySQL", "PostgreSQL", "MongoDB", "Firebase", "Amazon S3"]
+        items: ["MySQL", "PostgreSQL", "Firebase", "Amazon S3"]
       },
       {
         category: "Tools & Specialties",
@@ -291,7 +291,7 @@ export const portfolioData = {
     projects: [
       {
         id: 8,
-        title: "Criatools - Creator OS",
+        title: "Criatools",
         description: "All-in-one AI-powered web platform for content creators. Features automation tools, AI script generation, sponsorship tracking, analytics, and advanced utilities to boost productivity and content creation.",
         tech: ["React.js", "Laravel", "TypeScript", "Vite", "Tailwind CSS", "Lucide Icons"],
         image: "/criatools.webp",
@@ -303,7 +303,7 @@ export const portfolioData = {
       },
       {
         id: 10,
-        title: "ClickBos (Migration from ClickUp)",
+        title: "ClickBos\n(Migration from ClickUp)",
         description: "Enterprise task and project management platform migrated from ClickUp. Built with an optimized frontend architecture and an integrated OpenAI virtual assistant to automate workflows through natural language.",
         tech: ["React.js", "NestJS", "PostgreSQL", "OpenAI API", "TypeScript"],
         image: "/clickbos.webp",
@@ -325,7 +325,7 @@ export const portfolioData = {
       },
       {
         id: 9,
-        title: "LoomSpot (Migration from HubSpot)",
+        title: "LoomSpot\n(Migration from HubSpot)",
         description: "Comprehensive CRM designed for customer relationship management and migration. Features Aircall API Power Dialer integration for automated calling, and an omnichannel messaging module integrated with Meta APIs for WhatsApp and Messenger.",
         tech: ["Laravel", "MySQL", "Meta API", "Aircall API", "HubSpot"],
         image: "/crm.webp",
@@ -474,7 +474,8 @@ export const uiTranslations = {
     contactSectionTitle: "Contacto",
     contactTextLine1: "¿Quieres construir algo asombroso o simplemente conectar?",
     contactTextLine2: "Escríbeme y charlemos.",
-    footerText: (year, name) => `© ${year} ${name}. Hecho con React y Estilo Liquid Glass.`,
+    footerCopyright: (year, name) => `© ${year} ${name}`,
+    footerTagline: "Create ur own reality",
     lightboxCover: "Portada",
     lightboxCapture: (idx, total) => `Captura ${idx} de ${total}`,
     zoomOut: "Reducir zoom (-)",
@@ -516,7 +517,8 @@ export const uiTranslations = {
     contactSectionTitle: "Contact",
     contactTextLine1: "Looking to build something amazing or just want to connect?",
     contactTextLine2: "Drop me a line and let's talk.",
-    footerText: (year, name) => `© ${year} ${name}. Built with React and Liquid Glass Design.`,
+    footerCopyright: (year, name) => `© ${year} ${name}`,
+    footerTagline: "Create ur own reality",
     lightboxCover: "Cover",
     lightboxCapture: (idx, total) => `Screenshot ${idx} of ${total}`,
     zoomOut: "Zoom out (-)",

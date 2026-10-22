@@ -10,13 +10,14 @@ import {
   SiFlutter, 
   SiMysql, 
   SiPostgresql, 
-  SiMongodb, 
-  SiFirebase, 
+  SiTypescript, 
   SiGithub, 
   SiPostman, 
   SiFigma,
-  SiDocker
+  SiAstro,
+  SiNginx
 } from 'react-icons/si';
+import { TbBrandReactNative } from 'react-icons/tb';
 import { 
   BsBuilding, 
   BsLaptop, 
@@ -53,20 +54,21 @@ const SiAmazons3 = ({ color, ...props }) => (
 
 const techLogos = [
   { node: <SiReact color="#61DAFB" />, title: "React" },
+  { node: <SiAstro color="#BC52EE" />, title: "Astro" },
   { node: <SiLaravel color="#FF2D20" />, title: "Laravel" },
   { node: <SiPhp color="#777BB4" />, title: "PHP" },
   { node: <SiJavascript color="#F7DF1E" />, title: "JavaScript" },
+  { node: <SiTypescript color="#3178C6" />, title: "TypeScript" },
   { node: <SiC color="#A8B9CC" />, title: "C" },
+  { node: <TbBrandReactNative color="#61DAFB" />, title: "React Native" },
   { node: <SiFlutter color="#02569B" />, title: "Flutter" },
   { node: <SiMysql color="#4479A1" />, title: "MySQL" },
   { node: <SiPostgresql color="#4169E1" />, title: "PostgreSQL" },
-  { node: <SiMongodb color="#47A248" />, title: "MongoDB" },
-  { node: <SiFirebase color="#FFCA28" />, title: "Firebase" },
   { node: <SiAmazons3 color="#FF9900" />, title: "Amazon S3" },
   { node: <SiGithub style={{ color: 'var(--text-primary)' }} />, title: "GitHub" },
   { node: <SiPostman color="#FF6C37" />, title: "Postman" },
   { node: <SiFigma color="#F24E1E" />, title: "Figma" },
-  { node: <SiDocker color="#2496ED" />, title: "Docker" }
+  { node: <SiNginx color="#009639" />, title: "Nginx" }
 ];
 
 
@@ -594,11 +596,11 @@ function App() {
             <p key={`hero-desc-${lang}`} className="hero-description lang-animate lang-stagger-2">{personalInfo.subtitle}</p>
           </div>
           <div key={`hero-ctas-${lang}`} className="hero-ctas lang-animate lang-stagger-3">
-            <a href="#projects" className="btn btn-primary" onClick={(e) => { e.preventDefault(); handleNavClick('projects'); }}>
-              {t.heroViewProjects}
-            </a>
-            <a href="#contact" className="btn btn-secondary" onClick={(e) => { e.preventDefault(); handleNavClick('contact'); }}>
+            <a href="#contact" className="btn btn-primary" onClick={(e) => { e.preventDefault(); handleNavClick('contact'); }}>
               {t.heroContact}
+            </a>
+            <a href="#projects" className="btn btn-secondary" onClick={(e) => { e.preventDefault(); handleNavClick('projects'); }}>
+              {t.heroViewProjects}
             </a>
           </div>
 
@@ -809,7 +811,8 @@ function App() {
 
       {/* Footer */}
       <footer>
-        <p>{t.footerText(new Date().getFullYear(), personalInfo.name)}</p>
+        <p className="footer-copyright">{t.footerCopyright ? t.footerCopyright(new Date().getFullYear(), personalInfo.name) : `© ${new Date().getFullYear()} ${personalInfo.name}`}</p>
+        <p className="footer-tagline">{t.footerTagline || 'Create ur own reality'}</p>
       </footer>
 
       {/* Fullscreen Image Lightbox Modal */}
