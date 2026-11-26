@@ -27,7 +27,8 @@ import {
   BsRocket, 
   BsDiagram3, 
   BsCloud,
-  BsTrophyFill
+  BsTrophyFill,
+  BsLinkedin
 } from 'react-icons/bs';
 import { 
   LuUsers, 
@@ -800,6 +801,15 @@ function App() {
               >
                 <SiGithub size={20} />
                 <span>GitHub</span>
+              </a>
+              <a 
+                href={personalInfo.social.linkedin} 
+                className="social-btn" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <BsLinkedin size={20} color="#0A66C2" />
+                <span>LinkedIn</span>
               </a>
             </div>
             <a href={`mailto:${personalInfo.email}`} className="contact-email">

@@ -10,6 +10,7 @@ export const portfolioData = {
       email: "jonatanu24mtz@gmail.com",
       social: {
         github: "https://github.com/TheDarkfoxs",
+        linkedin: "https://www.linkedin.com/in/jonatan-mtz/",
         resume: "#"
       }
     },
@@ -233,6 +234,7 @@ export const portfolioData = {
       email: "jonatanu24mtz@gmail.com",
       social: {
         github: "https://github.com/TheDarkfoxs",
+        linkedin: "https://www.linkedin.com/in/jonatan-mtz/",
         resume: "#"
       }
     },
